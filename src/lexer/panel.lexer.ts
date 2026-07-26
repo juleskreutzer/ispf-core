@@ -29,19 +29,15 @@ export class PanelLexer {
                 return;
 
             switch (currentSection) {
-
-                case 'ATTR':
+                case SectionType.ATTR:
                     tokens.push(...new AttrSectionLexer(currentLines, startLine).lex());
                     break;
-
-                case 'BODY':
+                case SectionType.BODY:
                     tokens.push(...new BodySectionLexer(currentLines, startLine).lex());
                     break;
-
-                case 'PROC':
+                case SectionType.PROC:
                     tokens.push(...new ProcSectionLexer(currentLines, startLine).lex());
                     break;
-
                 default:
                     tokens.push(...new GenericSectionLexer(currentLines, startLine).lex());
 

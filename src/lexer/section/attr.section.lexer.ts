@@ -43,7 +43,7 @@ export class AttrSectionLexer extends SectionLexer {
 
             const content = trimmed.substring(1);
 
-            this.scanKeywords(content, lineNumber, line.indexOf(attributeChar! + 1), tokens);
+            this.scanKeywords(content, lineNumber, line.indexOf(attributeChar!) + 1, tokens);
         });
 
         return tokens;

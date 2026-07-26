@@ -1,0 +1,7 @@
+)ATTR
+@ TYPE(TEXT) COLOR(RED)
++ INTENS(HI)
+)BODY
+%Type your command ===> _ZCMD
+)PROC
+IF (&ZCMD = 'X')

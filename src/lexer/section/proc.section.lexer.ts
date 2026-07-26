@@ -4,7 +4,7 @@ import type { Token } from '../interface/index.ts';
 import { SectionLexer } from '../section.lexer.ts';
 
 // Using https://www.ibm.com/docs/en/zos/3.2.0?topic=sections-defining-processing-section
-const VARIABLE_REGEX = /^&[A-Z0-9]+/i;
+const VARIABLE_REGEX = /^&[A-Za-z0-9?!._]+/i;
 const IDENTIFIER_REGEX = /^[A-Z][A-Z0-9_-]*/i;
 const OPERATOR_REGEX = /^(=|<>|<=|>=|<|>|\+|-|\*|\/)/;
 

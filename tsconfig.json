@@ -38,7 +38,7 @@
     "skipLibCheck": true,
     "erasableSyntaxOnly": false
   },
-  "include": ["src/**/*.ts", "scr/**/*.d.ts"],
+  "include": ["src/**/*.ts", "tests/**/*.ts", "scr/**/*.d.ts"],
   "exclude": ["node_modules"],
   "files": ["./src/index.ts"]
 }

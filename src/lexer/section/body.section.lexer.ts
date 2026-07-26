@@ -48,7 +48,7 @@ export class BodySectionLexer extends SectionLexer {
             const current = line[position]!;
             
             /* Check attribute chars */
-            if (/^[+@#$_-]$/.test(current)) {
+            if (/^[+@#$-]$/.test(current)) {
                 flushText(position);
 
                 tokens.push({

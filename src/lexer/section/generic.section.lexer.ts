@@ -9,8 +9,11 @@ export class GenericSectionLexer extends SectionLexer {
         return this.lines.map((line, i) => ({
             type: TokenType.Text,
             value: line,
-            line: this.startLine + i,
-            column: 0
+            location: {
+                line: i,
+                column: 0,
+                length: line.length
+            }
         }));
     }
 }
