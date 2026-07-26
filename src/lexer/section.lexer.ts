@@ -1,4 +1,4 @@
-import type { Token } from "./interface/index.ts";
+import type { Token } from './interface/index.ts';
 
 export abstract class SectionLexer {
     constructor(

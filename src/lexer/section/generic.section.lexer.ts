@@ -1,6 +1,6 @@
-import { TokenType } from "../enum/index.ts";
-import type { Token } from "../interface/index.ts";
-import { SectionLexer } from "../section.lexer.ts";
+import { TokenType } from '../enum/index.ts';
+import type { Token } from '../interface/index.ts';
+import { SectionLexer } from '../section.lexer.ts';
 
 // Generic fallback lexer
 

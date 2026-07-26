@@ -1,28 +1,66 @@
-import type { AttrKeyword, TokenType } from "../enum/index.ts";
+import type { TokenType } from '../enum/index.ts';
+import type { SourceLocation } from './sourceLocation.interface.ts';
+import type { AttrCharToken, AttrKeywordToken, AttrValueToken } from './token/attr.token.interface.ts';
+import type { BodyAttributeReferenceToken } from './token/body.token.interface.ts';
+import type { ProcCommandToken, ProcKeywordToken } from './token/proc.token.interface.ts';
 
-export interface AttrCharToken {
-    type: TokenType.AttributeChar,
+export interface BaseToken {
+    type: TokenType;
+    value?: string | undefined;
+    location: SourceLocation
+}
+
+export interface VariableToken extends BaseToken {
+    type: TokenType.Variable;
     value: string;
-    line: number;
-    column: number;
 }
 
-export interface AttrKeywordToken {
-    type: TokenType.Keyword;
-    keyword: AttrKeyword;
-    argument?: string;
-    line: number;
-    column: number;
-}
-
-export interface TextToken {
-    type: TokenType.Text,
+export interface OperatorToken extends BaseToken {
+    type: TokenType.Operator;
     value: string;
-    line: number;
-    column: number;
 }
 
-export type Token =
+export interface NumberToken extends BaseToken {
+    type: TokenType.Number;
+    value: string;
+}
+
+export interface IdentifierToken extends BaseToken {
+    type: TokenType.Identifier;
+    value: string;
+}
+
+export interface ErrorToken extends BaseToken {
+    type: TokenType.Error;
+    message: string;
+}
+
+export interface CommentToken extends BaseToken {
+    type: TokenType.Comment;
+    value: string
+}
+
+export interface NewLineToken extends BaseToken {
+    type: TokenType.NewLine
+}
+
+export interface TextToken extends BaseToken {
+    type: TokenType.Text;
+    value: string;
+}
+
+export type Token = 
     | AttrCharToken
     | AttrKeywordToken
-    | TextToken
+    | AttrValueToken
+    | BodyAttributeReferenceToken
+    | ProcCommandToken
+    | ProcKeywordToken
+    | VariableToken
+    | OperatorToken
+    | NumberToken
+    | IdentifierToken
+    | ErrorToken
+    | CommentToken
+    | NewLineToken
+    | TextToken;

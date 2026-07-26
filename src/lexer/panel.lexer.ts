@@ -1,5 +1,6 @@
-import type { Token } from "./interface/index.ts";
-import { AttrSectionLexer, BodySectionLexer, GenericSectionLexer, ProcSectionLexer } from "./section/index.ts";
+import { SectionType } from './enum/index.ts';
+import type { Token } from './interface/index.ts';
+import { AttrSectionLexer, BodySectionLexer, GenericSectionLexer, ProcSectionLexer } from './section/index.ts';
 import * as fs from 'fs'
 
 export class PanelLexer {
@@ -18,7 +19,7 @@ export class PanelLexer {
 
         const tokens: Token[] = [];
 
-        let currentSection = "";
+        let currentSection = SectionType.UNKNOWN
         let currentLines: string[] = [];
         let startLine = 0;
 
@@ -29,15 +30,15 @@ export class PanelLexer {
 
             switch (currentSection) {
 
-                case "ATTR":
+                case 'ATTR':
                     tokens.push(...new AttrSectionLexer(currentLines, startLine).lex());
                     break;
 
-                case "BODY":
+                case 'BODY':
                     tokens.push(...new BodySectionLexer(currentLines, startLine).lex());
                     break;
 
-                case "PROC":
+                case 'PROC':
                     tokens.push(...new ProcSectionLexer(currentLines, startLine).lex());
                     break;
 
@@ -57,7 +58,9 @@ export class PanelLexer {
 
                 flush();
 
-                currentSection = match[1]!.toUpperCase();
+                const name = match[1]!.toUpperCase();
+
+                currentSection = Object.values(SectionType).includes(name as SectionType) ? name as SectionType : SectionType.UNKNOWN
                 startLine = i + 1;
 
                 return;
