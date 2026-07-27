@@ -1,0 +1,14 @@
+)ATTR                                                                           
+  ~ TYPE(INPUT) INTENS(HIGH) CAPS(ON)                                           
+  $ TYPE(TEXT)  INTENS(HIGH) CAPS(OFF) COLOR(TURQ)                              
+  @ TYPE(OUTPUT) INTENS(LOW)                                                    
+)BODY EXPAND(//)                                                                
+%/-/ Mainframe Services Technical Workshop 2.0 | Monitoring /-/                 
++ Select a menu option below+                                                   
++                                                                               
++$CAPD    :_a+ * MSU usage 4h.                                                  
++$NETMAP  :_b+ * Network routing                                                
++$ONLUSERS:_c+ * Online users                                                   
+)INIT                                                                           
+)PROC                                                                           
+)END                                                                            

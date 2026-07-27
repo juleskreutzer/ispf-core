@@ -1,8 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 
-import { createErrorToken } from '../src/lexer/diagnostic.ts';
-import { TokenType } from '../src/lexer/enum/token.enum.ts';
+import { createErrorToken } from '../../src/lexer/diagnostic.ts';
+import { TokenType } from '../../src/lexer/enum/token.enum.ts';
 
 test('createErrorToken builds an error token with the right metadata', () => {
   const token = createErrorToken('Unexpected input', 4, 2, 'X');

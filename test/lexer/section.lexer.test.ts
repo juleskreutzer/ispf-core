@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 
-import { SectionLexer } from '../src/lexer/section.lexer.ts';
+import { SectionLexer } from '../../src/lexer/section.lexer.ts';
 
 class TestSectionLexer extends SectionLexer {
   lex() {

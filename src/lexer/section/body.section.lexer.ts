@@ -3,6 +3,7 @@ import type { Token } from '../interface/index.ts';
 import { SectionLexer } from '../section.lexer.ts';
 
 const VARIABLE_REGEX = /^&[A-Z][A-Z0-9]+/i;
+const ATTRIBUTE_CHAR_REGEX = /^[@#$%~^*!+_\-]$/;
 
 // Using https://www.ibm.com/docs/en/zos/3.2.0?topic=sections-defining-body-section
 
@@ -48,7 +49,7 @@ export class BodySectionLexer extends SectionLexer {
             const current = line[position]!;
             
             /* Check attribute chars */
-            if (/^[+@#$-]$/.test(current)) {
+            if (ATTRIBUTE_CHAR_REGEX.test(current)) {
                 flushText(position);
 
                 tokens.push({

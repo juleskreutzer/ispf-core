@@ -25,7 +25,7 @@
   "scripts": {
     "build": "tsdown --config-loader tsx",
     "build:watch": "tsdown --watch --config-loader tsx",
-    "test": "node --import tsx --test --experimental-test-coverage tests/**/*.test.ts"
+    "test": "node --import tsx --test --experimental-test-coverage test/**/*.test.ts"
   },
   "nyc": "^17.1.0",
   "devDependencies": {

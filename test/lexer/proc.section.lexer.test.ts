@@ -1,8 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 
-import { TokenType } from '../src/lexer/enum/token.enum.ts';
-import { ProcSectionLexer } from '../src/lexer/section/proc.section.lexer.ts';
+import { TokenType } from '../../src/lexer/enum/token.enum.ts';
+import { ProcSectionLexer } from '../../src/lexer/section/proc.section.lexer.ts';
 
 test('ProcSectionLexer tokenizes keywords, variables and operators', () => {
   const tokens = new ProcSectionLexer(['IF (&ZCMD = \'X\')', '/* comment */'], 2).lex();

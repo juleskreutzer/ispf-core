@@ -1,0 +1,46 @@
+)ATTR                                                                           
+  ~ TYPE(INPUT) INTENS(HIGH) CAPS(ON)                                           
+  $ TYPE(TEXT)  INTENS(HIGH) CAPS(OFF) COLOR(GREEN)                             
+  @ TYPE(OUTPUT) INTENS(LOW)                                                    
+)BODY EXPAND(//)                                                                
+%/-/ Performance Monitor /-/                                                    
+%Option ===>_ZCMD/ /@datum                     +                                
++                                                                               
++ Select options below to run Performance Monitor reporting ad-hoc +            
++                                                                               
+%/-/ Environment selection /-/                                                  
++ Environment to be used: CV_e+                                                 
++                                                                               
+%/-/ SMF DUMP & Extraction /-/                                                  
++       Perform SMF DUMP:_D+                                                    
++             Start date:_adate  + Start time:_time1+                           
++             End date  :_edate  + End time  :_time2+                           
++ Perform SMF Extraction:_x+                                                    
++                                                                               
+%/-/ PerfMon Report generation /-/                                              
++ Create PerfMon reports: _r+                                                   
++         Reporting type: _ty+ * AM or IM+                                      
++         FTP to network: _f+                                                   
++                                                                               
++ Create report from_time3+ on_rsdate  +$Required+                              
++               thru_time4+ on_redate  + Optional+                              
++                                                                               
++ Select desired reports before submitting job!                                 
+)INIT                                                                           
+  .CURSOR = &CSRFLD                                                             
+)PROC                                                                           
+  VER(&E,LIST,1,2,3,4,5)                                                        
+  VER(&D,NB,LIST,Y,N)                                                           
+  VER(&ADATE,NUM)                                                               
+  VER(&TIME1,NB,PICT,'NN:NN')                                                   
+  VER(&EDATE,NUM)                                                               
+  VER(&TIME2,NB,PICT,'NN:NN')                                                   
+  VER(&X,NB,LIST,Y,N)                                                           
+  VER(&R,NB,LIST,Y,N)                                                           
+  IF (&R = 'Y')                                                                 
+    VER(&TY,NB,LIST,AM,IM)                                                      
+  VER(&F,NB,LIST,Y,N)                                                           
+  VER(&TIME3,NB,PICT,'NN:NN')                                                   
+  VER(&RSDATE,NUM)                                                              
+  VER(&TIME4,PICT,'NN:NN')                                                      
+)END                                                                            

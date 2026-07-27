@@ -1,0 +1,52 @@
+)ATTR                                                                           
+  ~ TYPE(INPUT) INTENS(HIGH) CAPS(ON) HILITE(USCORE)                            
+  $ TYPE(TEXT)  INTENS(HIGH) CAPS(OFF) COLOR(TURQ)                              
+  ^ TYPE(TEXT)  INTENS(HIGH) CAPS(OFF) COLOR(GREEN)                             
+  @ TYPE(OUTPUT) INTENS(LOW)                                                    
+)BODY EXPAND(//)                                                                
+%/-/ Performance Monitor - Report Options /-/                                   
++  $Provide custom command for reporting options (SYS010)+                      
++1.~inp1                                                                       +
++2.~inp2                                                                       +
++3.~inp3                                                                       +
+%/-/ Select desired reports /-/                                                 
++Report  S   Description            !  Report  S   Description                ! 
+$ARPT01:_a+* Task Detail           ^! $ARPT02:_b+* Task Summary+                
+$ARPT05:_c+* User Detail           ^! $ARPT06:_d+* User Summary+                
+$ARPT07:_e+* Billing Group Detail  ^! $ARPT08:_f+* Billing Group Summary+       
+$ARPT09:_g+* Abend Detail report   ^! $ARPT10:_h+* Abend Summary+               
+$ARPT11:_i+* LTERM Detail          ^! $ARPT12:_j+* LTERM Summary+               
+$ARPT13:_k+* PTERM Detail          ^! $ARPT14:_l+* PTERM Summary+               
+$ARPT15:_m+* System Task Detail       $ARPT16:_n+* System Task Summary+         
+$ARPT17:_o+* Database Detail       ^! $ARPT18:_p+* Database Summary+            
+$ARPT19:_q+* DC Statistics Detail  ^! $ARPT20:_r+* DC Statistics Summary+       
+$ARPT31:_s+* Task Wait Summary        $ARPT36:_t+* Task Wait Detail+         ^! 
+$ARPT80:+N+* Load Bal. Day + CV    ^X $ARPT81:+N * Load Balancing by CV+     ^X 
+$ARTP82:+N+* Load Bal. All CV's    ^X $ARPT90:+N * Machine otp extr. stats.  ^X 
+$ARPT97:+N+* Summary Recap         ^X $ARPT99:+N * Inp Processing Summary+   ^X 
++                                                                               
++ ^! Use with caution. Possible high output volume for long time selection !+   
++ ^X Does not contain usefull info. Include manually in generated JCL.+         
+)INIT                                                                           
+)PROC                                                                           
+  VER(&a,LIST,Y,N)                                                              
+  VER(&b,LIST,Y,N)                                                              
+  VER(&c,LIST,Y,N)                                                              
+  VER(&d,LIST,Y,N)                                                              
+  VER(&e,LIST,Y,N)                                                              
+  VER(&f,LIST,Y,N)                                                              
+  VER(&g,LIST,Y,N)                                                              
+  VER(&h,LIST,Y,N)                                                              
+  VER(&i,LIST,Y,N)                                                              
+  VER(&j,LIST,Y,N)                                                              
+  VER(&k,LIST,Y,N)                                                              
+  VER(&l,LIST,Y,N)                                                              
+  VER(&m,LIST,Y,N)                                                              
+  VER(&n,LIST,Y,N)                                                              
+  VER(&o,LIST,Y,N)                                                              
+  VER(&p,LIST,Y,N)                                                              
+  VER(&q,LIST,Y,N)                                                              
+  VER(&r,LIST,Y,N)                                                              
+  VER(&s,LIST,Y,N)                                                              
+  VER(&t,LIST,Y,N)                                                              
+)END                                                                            

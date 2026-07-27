@@ -1,9 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 
-import { AttrKeyword } from '../src/lexer/enum/attrKeyword.enum.ts';
-import { TokenType } from '../src/lexer/enum/token.enum.ts';
-import { AttrSectionLexer } from '../src/lexer/section/attr.section.lexer.ts';
+import { AttrKeyword } from '../../src/lexer/enum/attrKeyword.enum.ts';
+import { TokenType } from '../../src/lexer/enum/token.enum.ts';
+import { AttrSectionLexer } from '../../src/lexer/section/attr.section.lexer.ts';
 
 test('AttrSectionLexer tokenizes known attribute keywords and values', () => {
   const tokens = new AttrSectionLexer(['@ TYPE(TEXT) COLOR(RED)', '+ INTENS(HI)'], 3).lex();

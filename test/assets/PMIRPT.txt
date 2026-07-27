@@ -1,0 +1,55 @@
+)ATTR                                                                           
+  ~ TYPE(INPUT) INTENS(HIGH) CAPS(ON) HILITE(USCORE)                            
+  $ TYPE(TEXT)  INTENS(HIGH) CAPS(OFF) COLOR(TURQ)                              
+  ^ TYPE(TEXT)  INTENS(HIGH) CAPS(OFF) COLOR(GREEN)                             
+  @ TYPE(OUTPUT) INTENS(LOW)                                                    
+)BODY EXPAND(//)                                                                
+%/-/ Performance Monitor - Report Options /-/                                   
++  $Provide custom command for reporting options (SYS010)+                      
++1.~inp1                                                                       +
++2.~inp2                                                                       +
++3.~inp3                                                                       +
+%/-/ Select desired reports /-/                                                 
++Report  S   Description           !  Report  S    Description                ! 
+$IRPT01:_a+* Management Summary       $IRPT02:_b+* Trend Analysis+              
+$IRPT04:_c+* Summary Wait Detail      $IRPT05:_d+* DBKey Area Dtl+              
+$IRPT09:_e+* Shared Cache Summary     $IRPT10:_f+* DBGroup Summary+             
+$IRPT11:_g+* IO by Area Summary       $IRPT12:_h+* IO by File Summary+          
+$IRPT13:_i+* Buffer Summary           $IRPT14:_j+* CMDSLIB Summary+             
+$IRPT15:_k+* Journal Summary          $IRPT16:_l+* TP Line Summary+             
+$IRPT17:_m+* Program Pool Summary     $IRPT18:_n+* Storage Pool Summary+        
+$IRPT19:_o+* Storage Wait Summary     $IRPT21:_p+* IO by Area Detail+        ^! 
+$IRPT22:_q+* IO by File Detail     ^! $IRPT23:_r+* Buffer Detail+               
+$IRPT25:_s+* Journal Detail           $IRPT27:_t+* Program Pool Detail+         
+$IRPT29:_u+* Storage Type Detail      $IRPT30:_v+* Interval Stat. Summ.         
+$IRPT32:_w+* Run Unit Stat. Summ.     $IRPT38:_x+* Journal Block Full Dtl.      
++                                                                               
++ ^! Use with caution. Possible high output volume for long time selection !+   
+)INIT                                                                           
+)PROC                                                                           
+  VER(&a,LIST,Y,N)                                                              
+  VER(&b,LIST,Y,N)                                                              
+  VER(&c,LIST,Y,N)                                                              
+  VER(&d,LIST,Y,N)                                                              
+  VER(&e,LIST,Y,N)                                                              
+  VER(&f,LIST,Y,N)                                                              
+  VER(&g,LIST,Y,N)                                                              
+  VER(&h,LIST,Y,N)                                                              
+  VER(&i,LIST,Y,N)                                                              
+  VER(&j,LIST,Y,N)                                                              
+  VER(&k,LIST,Y,N)                                                              
+  VER(&l,LIST,Y,N)                                                              
+  VER(&m,LIST,Y,N)                                                              
+  VER(&n,LIST,Y,N)                                                              
+  VER(&o,LIST,Y,N)                                                              
+  VER(&p,LIST,Y,N)                                                              
+  VER(&q,LIST,Y,N)                                                              
+  VER(&r,LIST,Y,N)                                                              
+  VER(&s,LIST,Y,N)                                                              
+  VER(&t,LIST,Y,N)                                                              
+  VER(&u,LIST,Y,N)                                                              
+  VER(&v,LIST,Y,N)                                                              
+  VER(&w,LIST,Y,N)                                                              
+  VER(&x,LIST,Y,N)                                                              
+  VER(&y,LIST,Y,N)                                                              
+)END                                                                            

@@ -1,11 +1,16 @@
-import { TokenType, SectionType } from '../lexer/index.ts';
+import { TokenType, SectionType, AttrKeyword } from '../lexer/index.ts';
 import { AstNodeType } from './enum/astNode.enum.ts';
 import { Parser } from './parser.ts';
-import type { CommentNode, ErrorNode, PanelAst, SectionAst, SectionStatement, TextNode } from './interface/index.ts';
-import type {  SectionStartToken, Token } from '../lexer/index.ts';
-import { AttrParser, type AttrStatementNode } from './attr/attr.parser.ts';
+import type { AttributeDefinitionNode, CommentNode, ErrorNode, PanelAst, SectionAst, SectionStatement, TextNode } from './interface/index.ts';
+import type { SectionStartToken, Token } from '../lexer/index.ts';
 
 export class PanelParser extends Parser {
+    private readonly attributes = new Map<string, AttributeDefinitionNode>([
+        ['%', PanelParser.createDefaultAttribute('%', 'TEXT', 'HIGH')],
+        ['+', PanelParser.createDefaultAttribute('+', 'TEXT', 'LOW')],
+        ['_', PanelParser.createDefaultAttribute('_', 'INPUT', 'HIGH')]
+    ]);
+
     constructor(tokens: Token[]) {
         super(tokens);
     }
@@ -29,6 +34,25 @@ export class PanelParser extends Parser {
             type: AstNodeType.Panel,
             sections
         }
+    }
+
+    private static createDefaultAttribute(attributeChar: string, type: string, intens: string): AttributeDefinitionNode {
+        return {
+            type: AstNodeType.AttributeDefinition,
+            attributeChar,
+            options: [
+                {
+                    type: AstNodeType.AttributeOption,
+                    keyword: AttrKeyword.TYPE,
+                    value: type
+                },
+                {
+                    type: AstNodeType.AttributeOption,
+                    keyword: AttrKeyword.INTENS,
+                    value: intens
+                }
+            ]
+        };
     }
 
     private parseSection(): SectionAst | undefined {
@@ -64,8 +88,23 @@ export class PanelParser extends Parser {
 
     private parseSectionStatements(sectionType: SectionType, tokens: Token[]): SectionStatement[] {
         switch (sectionType) {
-            case SectionType.ATTR:
-                return new AttrParser(tokens).parse() as AttrStatementNode[];
+            case SectionType.ATTR: {
+                const { AttrParser } = require('./attr/attr.parser.ts') as typeof import('./attr/attr.parser.ts');
+                const statements = new AttrParser(tokens).parse();
+
+                // Store ATTR definitions so that they can for example be used in the BODY section
+                for (const statement of statements) {
+                    if (statement.type === AstNodeType.AttributeDefinition) {
+                        this.attributes.set(statement.attributeChar, statement);
+                    }
+                }
+
+                return statements;
+            }
+            case SectionType.BODY: {
+                const { BodyParser } = require('./body/body.parser.ts') as typeof import('./body/body.parser.ts');
+                return new BodyParser(tokens, { attributes: this.attributes }).parse();
+            }
             default:
                 return this.parseGenericStatements(tokens);
         }
