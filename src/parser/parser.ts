@@ -1,7 +1,8 @@
-import { TokenType, type Token } from "../lexer/index.js";
+import { TokenType } from '../lexer/index.ts';
 import { AstNodeType, createParserDiagnostic, TokenStream } from './index.ts';
 import type { ErrorNode, ParserDiagnostic, ParserDiagnosticSeverity } from './interface/index.ts';
 import type { ParserRecoveryOptions } from './interface/parserRecoveryOptions.interface.ts';
+import type { Token } from '../lexer/index.ts';
 
 export abstract class Parser {
     protected readonly stream: TokenStream
