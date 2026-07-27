@@ -1,4 +1,4 @@
-import { SectionType } from './enum/index.ts';
+import { SectionType, TokenType } from './enum/index.ts';
 import type { Token } from './interface/index.ts';
 import { AttrSectionLexer, BodySectionLexer, GenericSectionLexer, ProcSectionLexer } from './section/index.ts';
 import * as fs from 'fs'
@@ -27,6 +27,16 @@ export class PanelLexer {
 
             if (!currentLines.length)
                 return;
+
+            tokens.push({
+                type: TokenType.SectionStart,
+                value: currentSection,
+                location: {
+                    line: startLine - 1,
+                    column: 0,
+                    length: currentLines.length
+                }
+            });
 
             switch (currentSection) {
                 case SectionType.ATTR:

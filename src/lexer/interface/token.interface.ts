@@ -1,4 +1,4 @@
-import type { TokenType } from '../enum/index.ts';
+import type { SectionType, TokenType } from '../enum/index.ts';
 import type { SourceLocation } from './sourceLocation.interface.ts';
 import type { AttrCharToken, AttrKeywordToken, AttrValueToken } from './token/attr.token.interface.ts';
 import type { BodyAttributeReferenceToken } from './token/body.token.interface.ts';
@@ -8,6 +8,11 @@ export interface BaseToken {
     type: TokenType;
     value?: string | undefined;
     location: SourceLocation
+}
+
+export interface SectionStartToken extends BaseToken {
+    type: TokenType.SectionStart;
+    value: SectionType;
 }
 
 export interface VariableToken extends BaseToken {
@@ -41,7 +46,11 @@ export interface CommentToken extends BaseToken {
 }
 
 export interface NewLineToken extends BaseToken {
-    type: TokenType.NewLine
+    type: TokenType.NewLine;
+}
+
+export interface EOFToken extends BaseToken {
+    type: TokenType.EOF;
 }
 
 export interface TextToken extends BaseToken {
@@ -50,6 +59,7 @@ export interface TextToken extends BaseToken {
 }
 
 export type Token = 
+    | SectionStartToken
     | AttrCharToken
     | AttrKeywordToken
     | AttrValueToken
@@ -63,4 +73,5 @@ export type Token =
     | ErrorToken
     | CommentToken
     | NewLineToken
+    | EOFToken
     | TextToken;
