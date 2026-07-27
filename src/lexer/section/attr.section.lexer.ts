@@ -5,7 +5,7 @@ import type { Token } from '../interface/index.ts';
 import { SectionLexer } from '../section.lexer.ts';
 
 // Using https://www.ibm.com/docs/en/zos/3.2.0?topic=section-formatting-attribute-statements
-const VALID_ATTRIBUTE_CHAR = /^[@#$%~^*!+\-]$/;
+const VALID_ATTRIBUTE_CHAR = /^[@#$%~^*!+_\-]$/;
 
 export class AttrSectionLexer extends SectionLexer {
     lex(): Token[] {
