@@ -45,7 +45,7 @@ export class TokenStream {
     }
 
     consume(type?: TokenType): Token | undefined {
-        if (type !== undefined && this.check(type)) return undefined
+        if (type !== undefined && !this.check(type)) return undefined
 
         if (this.isAtEnd()) return undefined
 
