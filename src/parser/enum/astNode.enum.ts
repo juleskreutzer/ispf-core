@@ -12,6 +12,9 @@ export enum AstNodeType {
 
     ProcStatement = "ProcStatement",
     ProcKeyword = "ProcKeyword",
+    BinaryExpression = "BinaryExpression",
+    UnaryExpression = "UnaryExpression",
+    FunctionCallExpression = "FunctionCallExpression",
     Identifier = "Identifier",
     StringLiteral = "StringLiteral",
     NumberLiteral = "NumberLiteral",

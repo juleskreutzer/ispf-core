@@ -58,6 +58,16 @@ export interface TextToken extends BaseToken {
     value: string;
 }
 
+export interface StringToken extends BaseToken {
+    type: TokenType.String;
+    value: string;
+}
+
+export interface ParenthesisToken extends BaseToken {
+    type: TokenType.Parenthesis;
+    value: '(' | ')'
+}
+
 export type Token = 
     | SectionStartToken
     | AttrCharToken
@@ -74,4 +84,6 @@ export type Token =
     | CommentToken
     | NewLineToken
     | EOFToken
-    | TextToken;
+    | TextToken
+    | StringToken
+    | ParenthesisToken;

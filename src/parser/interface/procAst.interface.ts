@@ -8,6 +8,26 @@ export interface ProcStatementNode extends AstNode {
     argument: ProcExpressionNode[];
 }
 
+export interface BinaryExpressionNode extends AstNode {
+    type: AstNodeType.BinaryExpression;
+    operator: string;
+    left: ProcExpressionNode;
+    right: ProcExpressionNode;
+}
+
+export interface UnaryExpressionNode extends AstNode {
+    type: AstNodeType.UnaryExpression;
+    operator: string;
+    operand: ProcExpressionNode;
+}
+
+export interface FunctionCallExpressionNode extends AstNode {
+    type: AstNodeType.FunctionCallExpression;
+    name: string;
+    arguments: ProcExpressionNode[];
+    builtin: boolean;
+}
+
 export interface ProcKeywordNode extends AstNode {
     type: AstNodeType.ProcKeyword;
     keyword: ProcKeyword | string;

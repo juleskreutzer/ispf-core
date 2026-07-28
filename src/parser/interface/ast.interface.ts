@@ -1,6 +1,6 @@
 import type { SectionType, SourceLocation } from '../../lexer/index.ts';
 import type { AstNodeType } from '../enum/index.ts';
-import type { AttributeDefinitionNode, BodyAttributeReferenceNode, BodyLineNode, BodyTextNode, CommentNode, ErrorNode, IdentifierNode, NumberLiteralNode, OperatorNode, ProcKeywordNode, ProcStatementNode, StringLiteralNode, TextNode, VariableReferenceNode } from './index.ts';
+import type { AttributeDefinitionNode, BinaryExpressionNode, BodyAttributeReferenceNode, BodyLineNode, BodyTextNode, CommentNode, ErrorNode, FunctionCallExpressionNode, IdentifierNode, NumberLiteralNode, OperatorNode, ProcKeywordNode, ProcStatementNode, StringLiteralNode, TextNode, UnaryExpressionNode, VariableReferenceNode } from './index.ts';
 
 export interface AstNode {
     type: AstNodeType;
@@ -28,6 +28,9 @@ export type SectionStatement =
     | ErrorNode;
 
 export type ProcExpressionNode = 
+    | BinaryExpressionNode
+    | UnaryExpressionNode
+    | FunctionCallExpressionNode
     | ProcKeywordNode
     | IdentifierNode
     | VariableReferenceNode

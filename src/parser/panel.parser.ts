@@ -1,8 +1,12 @@
 import { TokenType, SectionType, AttrKeyword } from '../lexer/index.ts';
 import { AstNodeType } from './enum/astNode.enum.ts';
 import { Parser } from './parser.ts';
+import { AttrParser } from './attr/index.ts';
+import { BodyParser } from './body/index.ts';
+import { ProcParser } from './proc/index.ts';
 import type { AttributeDefinitionNode, CommentNode, ErrorNode, PanelAst, SectionAst, SectionStatement, TextNode } from './interface/index.ts';
 import type { SectionStartToken, Token } from '../lexer/index.ts';
+
 
 export class PanelParser extends Parser {
     private readonly attributes = new Map<string, AttributeDefinitionNode>([
@@ -89,7 +93,6 @@ export class PanelParser extends Parser {
     private parseSectionStatements(sectionType: SectionType, tokens: Token[]): SectionStatement[] {
         switch (sectionType) {
             case SectionType.ATTR: {
-                const { AttrParser } = require('./attr/attr.parser.ts') as typeof import('./attr/attr.parser.ts');
                 const statements = new AttrParser(tokens).parse();
 
                 // Store ATTR definitions so that they can for example be used in the BODY section
@@ -101,10 +104,10 @@ export class PanelParser extends Parser {
 
                 return statements;
             }
-            case SectionType.BODY: {
-                const { BodyParser } = require('./body/body.parser.ts') as typeof import('./body/body.parser.ts');
+            case SectionType.BODY: 
                 return new BodyParser(tokens, { attributes: this.attributes }).parse();
-            }
+            case SectionType.PROC:
+                return new ProcParser(tokens).parse();
             default:
                 return this.parseGenericStatements(tokens);
         }

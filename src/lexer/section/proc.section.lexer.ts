@@ -6,7 +6,7 @@ import { SectionLexer } from '../section.lexer.ts';
 // Using https://www.ibm.com/docs/en/zos/3.2.0?topic=sections-defining-processing-section
 const VARIABLE_REGEX = /^&[A-Za-z0-9?!._]+/i;
 const IDENTIFIER_REGEX = /^[A-Z][A-Z0-9_-]*/i;
-const OPERATOR_REGEX = /^(=|<>|<=|>=|<|>|\+|-|\*|\/)/;
+const OPERATOR_REGEX = /^(=|<>|<=|>=|<|>|\+|-|\*|\/|,)/;
 
 export class ProcSectionLexer extends SectionLexer {
     lex(): Token[] {
@@ -53,7 +53,7 @@ export class ProcSectionLexer extends SectionLexer {
                     const value = remaining.substring(0, end + 1);
 
                     tokens.push({
-                        type: TokenType.Text,
+                        type: TokenType.String,
                         value: value,
                         location: {
                             line: lineNumber,
@@ -84,6 +84,19 @@ export class ProcSectionLexer extends SectionLexer {
 
                 position += variable[0].length;
                 continue;
+            }
+
+            /* Check for parenthesis */
+            if (remaining[0] === '(' || remaining[0] === ')') {
+                tokens.push({
+                    type: TokenType.Parenthesis,
+                    value: remaining[0],
+                    location: {
+                        line: lineNumber,
+                        column: position,
+                        length: 1
+                    }
+                });
             }
 
             /* Check for operators */
@@ -156,5 +169,14 @@ export class ProcSectionLexer extends SectionLexer {
 
             position++;
         }
+
+        tokens.push({
+            type: TokenType.NewLine,
+            location: {
+                line: lineNumber,
+                column: line.length,
+                length: 0
+            }
+        });
     }
 }
