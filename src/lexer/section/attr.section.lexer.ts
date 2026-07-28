@@ -1,8 +1,6 @@
-import { createErrorToken } from '../diagnostic.ts';
-import { AttrKeyword } from '../enum/attrKeyword.enum.ts';
-import { TokenType } from '../enum/index.ts';
+import { createErrorToken, SectionLexer } from '../index.ts';
+import { TokenType, AttrKeyword } from '../enum/index.ts';
 import type { Token } from '../interface/index.ts';
-import { SectionLexer } from '../section.lexer.ts';
 
 // Using https://www.ibm.com/docs/en/zos/3.2.0?topic=section-formatting-attribute-statements
 const VALID_ATTRIBUTE_CHAR = /^[@#$%~^*!+_\-]$/;

@@ -1,6 +1,6 @@
 import { TokenType } from '../enum/index.ts';
+import { SectionLexer } from '../index.ts';
 import type { Token } from '../interface/index.ts';
-import { SectionLexer } from '../section.lexer.ts';
 
 const VARIABLE_REGEX = /^&[A-Z][A-Z0-9]+/i;
 const ATTRIBUTE_CHAR_REGEX = /^[@#$%~^*!+_\-]$/;

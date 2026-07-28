@@ -1,9 +1,8 @@
-import { Parser } from '../parser.ts';
+import { Parser } from '../index.ts';
 import { TokenType } from '../../lexer/index.ts';
-import { AstNodeType } from '../enum/astNode.enum.ts';
+import { AstNodeType } from '../enum/index.ts';
 import type { Token } from '../../lexer/index.ts';
-import type { ProcExpressionNode } from '../interface/ast.interface.ts';
-import type { ErrorNode, ProcStatementNode } from '../interface/procAst.interface.ts';
+import type { ProcExpressionNode, ErrorNode, ProcStatementNode } from '../interface/index.ts';
 
 export type ProcStatement = ProcStatementNode | ErrorNode
 

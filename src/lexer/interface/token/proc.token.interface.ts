@@ -1,5 +1,5 @@
-import type { TokenType } from '../../enum/token.enum.ts';
-import type { BaseToken } from '../token.interface.ts';
+import type { TokenType } from '../../enum/index.ts';
+import type { BaseToken } from '../index.ts';
 
 export interface ProcCommandToken extends BaseToken {
     type: TokenType.ProcCommand;

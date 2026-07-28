@@ -1,6 +1,6 @@
-import type { AttrKeyword } from "../../lexer/index.ts";
-import type { AstNodeType } from "../enum/astNode.enum.ts";
-import type { AstNode } from "./ast.interface.ts";
+import type { AttrKeyword } from '../../lexer/index.ts';
+import type { AstNodeType } from '../enum/index.ts';
+import type { AstNode } from './index.ts';
 
 export interface AttributeDefinitionNode extends AstNode {
     type: AstNodeType.AttributeDefinition;

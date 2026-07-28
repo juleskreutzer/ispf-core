@@ -1,4 +1,4 @@
-import type { AttributeDefinitionNode } from './attrAst.interface.ts';
+import type { AttributeDefinitionNode } from './index.ts';
 
 export interface BodyParserOptions {
     attributes?: ReadonlyMap<string, AttributeDefinitionNode> | undefined;

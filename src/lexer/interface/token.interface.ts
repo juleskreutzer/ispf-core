@@ -1,8 +1,6 @@
 import type { SectionType, TokenType } from '../enum/index.ts';
-import type { SourceLocation } from './sourceLocation.interface.ts';
-import type { AttrCharToken, AttrKeywordToken, AttrValueToken } from './token/attr.token.interface.ts';
-import type { BodyAttributeReferenceToken } from './token/body.token.interface.ts';
-import type { ProcCommandToken, ProcKeywordToken } from './token/proc.token.interface.ts';
+import type { SourceLocation } from './index.ts';
+import type { AttrCharToken, AttrKeywordToken, AttrValueToken, BodyAttributeReferenceToken, ProcCommandToken, ProcKeywordToken } from './token/index.ts';
 
 export interface BaseToken {
     type: TokenType;

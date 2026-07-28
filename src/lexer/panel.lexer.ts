@@ -1,6 +1,6 @@
 import { SectionType, TokenType } from './enum/index.ts';
-import type { Token } from './interface/index.ts';
 import { AttrSectionLexer, BodySectionLexer, GenericSectionLexer, ProcSectionLexer } from './section/index.ts';
+import type { Token } from './interface/index.ts';
 import * as fs from 'fs'
 
 export class PanelLexer {

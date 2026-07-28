@@ -1,5 +1,5 @@
 import type { ProcKeyword } from '../../lexer/index.ts';
-import type { AstNodeType } from '../enum/astNode.enum.ts';
+import type { AstNodeType } from '../enum/index.ts';
 import type { AstNode, ProcExpressionNode } from './index.ts';
 
 export interface ProcStatementNode extends AstNode {

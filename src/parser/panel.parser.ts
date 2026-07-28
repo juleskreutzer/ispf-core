@@ -1,19 +1,12 @@
-import { TokenType, SectionType, AttrKeyword } from '../lexer/index.ts';
-import { AstNodeType } from './enum/astNode.enum.ts';
-import { Parser } from './parser.ts';
-import { AttrParser } from './attr/index.ts';
-import { BodyParser } from './body/index.ts';
-import { ProcParser } from './proc/index.ts';
-import type { AttributeDefinitionNode, CommentNode, ErrorNode, PanelAst, SectionAst, SectionStatement, TextNode } from './interface/index.ts';
+import { TokenType, SectionType } from '../lexer/index.ts';
+import { AstNodeType } from './enum/index.ts';
+import { Parser, AttrParser, BodyParser, ProcParser } from './index.ts';
+import { createDefaultAttributes } from '../shared/index.ts';
+import type { CommentNode, ErrorNode, PanelAst, SectionAst, SectionStatement, TextNode } from './interface/index.ts';
 import type { SectionStartToken, Token } from '../lexer/index.ts';
 
-
 export class PanelParser extends Parser {
-    private readonly attributes = new Map<string, AttributeDefinitionNode>([
-        ['%', PanelParser.createDefaultAttribute('%', 'TEXT', 'HIGH')],
-        ['+', PanelParser.createDefaultAttribute('+', 'TEXT', 'LOW')],
-        ['_', PanelParser.createDefaultAttribute('_', 'INPUT', 'HIGH')]
-    ]);
+    private readonly attributes = createDefaultAttributes();
 
     constructor(tokens: Token[]) {
         super(tokens);
@@ -38,25 +31,6 @@ export class PanelParser extends Parser {
             type: AstNodeType.Panel,
             sections
         }
-    }
-
-    private static createDefaultAttribute(attributeChar: string, type: string, intens: string): AttributeDefinitionNode {
-        return {
-            type: AstNodeType.AttributeDefinition,
-            attributeChar,
-            options: [
-                {
-                    type: AstNodeType.AttributeOption,
-                    keyword: AttrKeyword.TYPE,
-                    value: type
-                },
-                {
-                    type: AstNodeType.AttributeOption,
-                    keyword: AttrKeyword.INTENS,
-                    value: intens
-                }
-            ]
-        };
     }
 
     private parseSection(): SectionAst | undefined {
@@ -101,6 +75,8 @@ export class PanelParser extends Parser {
                         this.attributes.set(statement.attributeChar, statement);
                     }
                 }
+
+
 
                 return statements;
             }

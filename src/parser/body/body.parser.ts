@@ -1,7 +1,8 @@
-import { Parser } from '../parser.ts';
-import { AttrKeyword, TokenType, type Token } from '../../lexer/index.ts';
+import { Parser } from '../index.ts';
+import { AttrKeyword, TokenType } from '../../lexer/index.ts';
 import { AstNodeType } from '../enum/index.ts';
 import type { AttributeDefinitionNode, BodyAttributeReferenceNode, BodyContentNode, BodyLineNode, BodyParserOptions, BodyTextNode, ErrorNode, VariableReferenceNode } from '../interface/index.ts';
+import type { Token } from '../../lexer/index.ts';
 
 export type BodyStatementNode = BodyLineNode | ErrorNode;
 

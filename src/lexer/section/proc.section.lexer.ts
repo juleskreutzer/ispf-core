@@ -1,7 +1,6 @@
-import { createErrorToken } from '../diagnostic.ts';
+import { createErrorToken, SectionLexer } from '../index.ts';
 import { ProcKeyword, TokenType } from '../enum/index.ts';
 import type { Token } from '../interface/index.ts';
-import { SectionLexer } from '../section.lexer.ts';
 
 // Using https://www.ibm.com/docs/en/zos/3.2.0?topic=sections-defining-processing-section
 const VARIABLE_REGEX = /^&[A-Za-z0-9?!._]+/i;
@@ -97,6 +96,9 @@ export class ProcSectionLexer extends SectionLexer {
                         length: 1
                     }
                 });
+
+                position++;
+                continue;
             }
 
             /* Check for operators */

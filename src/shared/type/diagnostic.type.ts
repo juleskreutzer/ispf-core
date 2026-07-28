@@ -1,0 +1,1 @@
+export type DiagnosticSeverity = 'fatal' | 'error' | 'warning' | 'info' | 'trace';

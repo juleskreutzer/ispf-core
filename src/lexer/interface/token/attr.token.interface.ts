@@ -1,4 +1,4 @@
-import type { BaseToken } from '../token.interface.ts';
+import type { BaseToken } from '../index.ts';
 import type { AttrKeyword, TokenType } from '../../enum/index.ts';
 
 export interface AttrCharToken extends BaseToken {
