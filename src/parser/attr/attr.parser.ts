@@ -35,16 +35,19 @@ export class AttrParser extends Parser {
         const attributeChar = this.match(TokenType.AttributeChar);
 
         if(!attributeChar) {
-            if (this.match(TokenType.Error)) {
-                return this.errorNode(`Invalid attribute definitions`, this.previous);
-            }
+            const lexerError = this.parseLexerError();
+
+            if (lexerError) return lexerError
+            // if (this.match(TokenType.Error)) {
+            //     return this.errorNode(`Invalid attribute definitions`, this.previous);
+            // }
 
             const error = this.errorNode(`Expected attribute char but found '${this.current.type}'`);
             this.recover({ consumeSynchronizationToken: true });
             return error;
         }
 
-        const options: AttributeOptionNode[] = []
+        const options: (AttributeOptionNode | ErrorNode)[] = []
 
         while(!this.isAtEnd() && !this.check(TokenType.AttributeChar) && !this.check(TokenType.SectionStart)) {
             if (this.match(TokenType.NewLine, TokenType.Comment)) continue;
@@ -65,14 +68,13 @@ export class AttrParser extends Parser {
         };
     }
 
-    private parseOption(): AttributeOptionNode | undefined {
+    private parseOption(): AttributeOptionNode | ErrorNode | undefined {
         const keyword = this.match(TokenType.AttributeKeyword) as AttrKeywordToken | undefined;
 
         if (!keyword) {
-            if (this.match(TokenType.Error)) {
-                this.error(`Invalid attribute option`, this.previous);
-                return undefined;
-            }
+            const lexerError = this.parseLexerError();
+
+            if (lexerError) return lexerError;
 
             if(this.match(TokenType.AttributeValue)) {
                 this.error(`Unexpected attribute value without keyword`, this.current);

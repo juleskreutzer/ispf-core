@@ -45,3 +45,4 @@ export type BodyContentNode =
     | BodyTextNode
     | BodyAttributeReferenceNode
     | VariableReferenceNode
+    | ErrorNode

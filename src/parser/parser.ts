@@ -97,4 +97,19 @@ export abstract class Parser {
     protected mergeDiagnostics(diags: Diagnostic[]): void {
         this.parserDiagnostics.push(...diags);
     }
+
+    protected parseLexerError(): ErrorNode | undefined {
+        const token = this.match(TokenType.Error);
+
+        if (!token) return undefined;
+
+        this.error(token.value ?? 'Lexer error', token);
+
+        return {
+            type: AstNodeType.Error,
+            message: token.value ?? 'Lexer error',
+            value: token.value,
+            location: token.location
+        }
+    }
 }

@@ -1,7 +1,7 @@
 import { Parser } from '../parser.ts';
 import { AttrKeyword, TokenType } from '../../lexer/index.ts';
 import { AstNodeType } from '../enum/index.ts';
-import type { AttributeDefinitionNode, BodyAttributeReferenceNode, BodyContentNode, BodyLineNode, BodyParserOptions, BodyTextNode, ErrorNode, VariableReferenceNode } from '../interface/index.ts';
+import type { AttributeDefinitionNode, AttributeOptionNode, BodyAttributeReferenceNode, BodyContentNode, BodyLineNode, BodyParserOptions, BodyTextNode, ErrorNode, VariableReferenceNode } from '../interface/index.ts';
 import type { Token } from '../../lexer/index.ts';
 
 export type BodyStatementNode = BodyLineNode | ErrorNode;
@@ -65,7 +65,7 @@ export class BodyParser extends Parser {
         }
     }
 
-    private parseContent(): BodyContentNode | undefined {
+    private parseContent(): BodyContentNode | ErrorNode | undefined {
         const text = this.match(TokenType.Text);
 
         if (text) {
@@ -108,10 +108,14 @@ export class BodyParser extends Parser {
             } satisfies BodyAttributeReferenceNode
         }
 
-        if (this.match(TokenType.Error)) {
-            this.error(`Invalid BODY content`, this.previous);
-            return undefined;
-        }
+        const lexerError = this.parseLexerError();
+
+        if (lexerError) return lexerError;
+
+        // if (this.match(TokenType.Error)) {
+        //     this.error(`Invalid BODY content`, this.previous);
+        //     return undefined;
+        // }
 
         return undefined;
     }
@@ -136,7 +140,7 @@ export class BodyParser extends Parser {
     }
 
     private isVariableFieldAttribute(attribute: AttributeDefinitionNode): boolean {
-        const typeOptions = attribute.options.find((option) => option.keyword === AttrKeyword.TYPE);
+        const typeOptions = attribute.options.find((option) => (option as AttributeOptionNode).keyword === AttrKeyword.TYPE);
         const type = typeOptions?.value?.toUpperCase();
 
         // Following is not exhaustive, check allowed TYPE values here: https://www.ibm.com/docs/en/zos/3.2.0?topic=section-formatting-attribute-statements

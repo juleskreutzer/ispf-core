@@ -35,6 +35,11 @@ export class AttrSectionValidator extends BaseValidator {
             // Check if we have already seen the keyword
             const seen = new Set<string>();
             for (const option of statement.options) {
+                if (option.type === AstNodeType.Error) {
+                    this.createDiagnostic(option.message, 'error', option.location);
+                    continue
+                }
+                
                 const spec = ATTR_SPEC[option.keyword];
 
                 // Check valid keyword
