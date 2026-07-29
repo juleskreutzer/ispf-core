@@ -2,6 +2,7 @@ import { AstNodeType, type SectionAst } from '../../parser/index.ts';
 import { ATTR_SPEC, createDefaultAttributes } from '../../shared/index.ts';
 import { BaseValidator } from './base.validator.section.ts';
 import type { AttrValidatorResult, ValidatorResult } from '../../shared/index.ts';
+import { AttrKeyword } from '../../lexer/index.ts';
 
 export class AttrSectionValidator extends BaseValidator {
 
@@ -42,6 +43,11 @@ export class AttrSectionValidator extends BaseValidator {
                     continue;
                 }
 
+                if (seen.has(option.keyword) && !spec.repeatable) {
+                    this.createDiagnostic(`Keyword '${option.keyword}' specified more than once`, 'error', option.location);
+                    continue;
+                }
+
                 seen.add(option.keyword);
 
                 // Check for valid keyword value
@@ -56,6 +62,11 @@ export class AttrSectionValidator extends BaseValidator {
                     this.createDiagnostic(`Value '${option.value ?? ''}' should not exceed a length of '${spec.maxLength}' characters`, 'warning', option.location);
                     continue;
                 }
+            }
+
+            // Currently only the TYPE keyword is required
+            if (!seen.has(AttrKeyword.TYPE)) {
+                this.createDiagnostic(`Attribute '${attribute}' is missing the keyword: 'TYPE'`, 'fatal');
             }
 
             table.set(attribute, statement);

@@ -3,7 +3,7 @@ import { AstNodeType, createParserDiagnostic, TokenStream } from './index.ts';
 import type { ErrorNode } from './interface/index.ts';
 import type { ParserRecoveryOptions } from './interface/index.ts';
 import type { Token } from '../lexer/index.ts';
-import type { Diagnostic, DiagnosticSeverity } from '../shared/index.ts';
+import type { Diagnostic, DiagnosticOrigin, DiagnosticSeverity } from '../shared/index.ts';
 
 export abstract class Parser {
     protected readonly stream: TokenStream
@@ -57,8 +57,8 @@ export abstract class Parser {
         this.error(message ?? `Expected token '${type}' by found '${this.current,type}`, this.current);
     }
 
-    protected error(message: string, token: Token = this.current, severity: DiagnosticSeverity = 'error'): Diagnostic {
-        const diagnostic = createParserDiagnostic(message, token, severity);
+    protected error(message: string, token: Token = this.current, severity: DiagnosticSeverity = 'error', origin: DiagnosticOrigin = 'PARSER'): Diagnostic {
+        const diagnostic = createParserDiagnostic(message, token, severity, origin);
         this.parserDiagnostics.push(diagnostic);
         return diagnostic;
     }

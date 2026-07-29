@@ -1,6 +1,6 @@
 import type { SourceLocation, Token } from '../../lexer/index.ts';
 import type { AttributeDefinitionNode, SectionAst } from '../../parser/index.ts';
-import type { Diagnostic, DiagnosticSeverity, ValidatorResult } from '../../shared/index.ts';
+import type { Diagnostic, DiagnosticOrigin, DiagnosticSeverity, ValidatorResult } from '../../shared/index.ts';
 
 export abstract class BaseValidator {
     private validatorDiagnostics: Diagnostic[]
@@ -27,10 +27,11 @@ export abstract class BaseValidator {
         return this._attributes;
     }
 
-    protected createDiagnostic(message: string, severity: DiagnosticSeverity = 'error', location?: SourceLocation | undefined, token?: Token | undefined) {
+    protected createDiagnostic(message: string, severity: DiagnosticSeverity = 'error', location?: SourceLocation | undefined, token?: Token | undefined, origin: DiagnosticOrigin = 'VALIDATOR') {
         const diag = {
             message,
             severity,
+            origin,
             location,
             token
         }

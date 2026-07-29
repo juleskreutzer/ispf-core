@@ -1,0 +1,1 @@
+export type DiagnosticOrigin = 'LEXER' | 'PARSER' | 'VALIDATOR';

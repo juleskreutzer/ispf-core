@@ -19,7 +19,8 @@ export class PanelValidator {
         if (!parserResult.ast) {
             this.diagnostics.push({
                 message: `Unable to validate empty panel`,
-                severity: 'fatal'
+                severity: 'fatal',
+                origin: 'VALIDATOR'
             });
         } else {
             this.ast = parserResult.ast;
@@ -43,7 +44,8 @@ export class PanelValidator {
                     default:
                         this.diagnostics.push({
                             message: `Section type '${section.sectionType}' is currently not supported`,
-                            severity: 'fatal'
+                            severity: 'fatal',
+                            origin: 'VALIDATOR'
                         });
                 }
             }
