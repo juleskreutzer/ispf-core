@@ -4,6 +4,7 @@ import { Parser, AttrParser, BodyParser, ProcParser } from './index.ts';
 import { createDefaultAttributes } from '../shared/index.ts';
 import type { CommentNode, ErrorNode, PanelAst, SectionAst, SectionStatement, TextNode } from './interface/index.ts';
 import type { SectionStartToken, Token } from '../lexer/index.ts';
+import type { ParserResult } from '../shared/index.ts';
 
 export class PanelParser extends Parser {
     private readonly attributes = createDefaultAttributes();
@@ -12,7 +13,7 @@ export class PanelParser extends Parser {
         super(tokens);
     }
 
-    parse(): PanelAst {
+    parse(): ParserResult {
         const sections: SectionAst[] = [];
 
         this.skipTrivia();
@@ -28,9 +29,13 @@ export class PanelParser extends Parser {
         }
 
         return {
-            type: AstNodeType.Panel,
-            sections
+            ast: {
+                type: AstNodeType.Panel,
+                sections
+            },
+            diagnostics: this.diagnostics
         }
+
     }
 
     private parseSection(): SectionAst | undefined {
@@ -65,9 +70,12 @@ export class PanelParser extends Parser {
     }
 
     private parseSectionStatements(sectionType: SectionType, tokens: Token[]): SectionStatement[] {
+        let statements;
         switch (sectionType) {
             case SectionType.ATTR: {
-                const statements = new AttrParser(tokens).parse();
+                const attrParser: AttrParser = new AttrParser(tokens);
+                statements = attrParser.parse();
+                this.mergeDiagnostics(attrParser.diagnostics);
 
                 // Store ATTR definitions so that they can for example be used in the BODY section
                 for (const statement of statements) {
@@ -79,9 +87,15 @@ export class PanelParser extends Parser {
                 return statements;
             }
             case SectionType.BODY: 
-                return new BodyParser(tokens, { attributes: this.attributes }).parse();
+                const bodyParser = new BodyParser(tokens, { attributes: this.attributes });
+                statements = bodyParser.parse();
+                this.mergeDiagnostics(bodyParser.diagnostics);
+                return statements;
             case SectionType.PROC:
-                return new ProcParser(tokens).parse();
+                const procParser: ProcParser = new ProcParser(tokens);
+                statements = procParser.parse();
+                this.mergeDiagnostics(procParser.diagnostics);
+                return statements;
             default:
                 return this.parseGenericStatements(tokens);
         }

@@ -55,9 +55,6 @@ export class AttrParser extends Parser {
                 options.push(option);
                 continue;
             }
-
-            this.recover();
-            break;
         }
 
         return {
@@ -75,6 +72,11 @@ export class AttrParser extends Parser {
             if (this.match(TokenType.Error)) {
                 this.error(`Invalid attribute option`, this.previous);
                 return undefined;
+            }
+
+            if(this.match(TokenType.AttributeValue)) {
+                this.error(`Unexpected attribute value without keyword`, this.current);
+                return undefined
             }
 
             this.error(`Expected attribute keyword but found '${this.current.type}'`);

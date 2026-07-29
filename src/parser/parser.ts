@@ -13,7 +13,7 @@ export abstract class Parser {
         this.stream = tokens instanceof TokenStream ? tokens : new TokenStream(tokens);
     }
 
-    get diagnostics(): readonly Diagnostic[] {
+    get diagnostics(): Diagnostic[] {
         return this.parserDiagnostics;
     }
 
@@ -92,5 +92,9 @@ export abstract class Parser {
         while (this.match(TokenType.NewLine, TokenType.Comment)) {
             // Do nothing, continue untill a non-trivia token is found
         }
+    }
+
+    protected mergeDiagnostics(diags: Diagnostic[]): void {
+        this.parserDiagnostics.push(...diags);
     }
 }
