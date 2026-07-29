@@ -76,8 +76,6 @@ export class PanelParser extends Parser {
                     }
                 }
 
-
-
                 return statements;
             }
             case SectionType.BODY: 

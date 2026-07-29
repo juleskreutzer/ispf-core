@@ -1,4 +1,4 @@
-import { Parser } from '../index.ts';
+import { Parser } from '../parser.ts';
 import { TokenType } from '../../lexer/index.ts';
 import { AstNodeType } from '../enum/index.ts';
 import type { Token } from '../../lexer/index.ts';

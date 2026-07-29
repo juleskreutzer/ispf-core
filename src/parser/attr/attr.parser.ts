@@ -1,6 +1,6 @@
 import { TokenType } from '../../lexer/index.ts';
 import { AstNodeType } from '../enum/index.ts';
-import { Parser } from '../index.ts';
+import { Parser } from '../parser.ts';
 import type { AttributeDefinitionNode, AttributeOptionNode, ErrorNode } from '../interface/index.ts';
 import type { AttrKeywordToken, AttrValueToken } from '../../lexer/interface/index.ts';
 import type { Token } from '../../lexer/index.ts';

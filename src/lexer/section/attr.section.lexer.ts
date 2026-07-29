@@ -1,4 +1,5 @@
-import { createErrorToken, SectionLexer } from '../index.ts';
+import { createErrorToken } from '../index.ts';
+import { SectionLexer } from '../section.lexer.ts';
 import { TokenType, AttrKeyword } from '../enum/index.ts';
 import type { Token } from '../interface/index.ts';
 
