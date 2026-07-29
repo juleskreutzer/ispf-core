@@ -51,16 +51,21 @@ export class AttrSectionValidator extends BaseValidator {
                 seen.add(option.keyword);
 
                 // Check for valid keyword value
-                if (spec && spec.allowedInputRegex && !spec.allowedInputRegex.test(option.value ?? '')) {
+                if (spec && spec.maxLength && (option.value ?? '').length > spec.maxLength) {
+                    this.createDiagnostic(`Value '${option.value ?? ''}' should not exceed a length of '${spec.maxLength}' characters`, 'warning', option.location);
+                    continue;
+                } else  if (spec && spec.allowedInputRegex && !spec.allowedInputRegex.test(option.value ?? '')) {
                     // Assume RegEx also allows default values
                     this.createDiagnostic(`Value '${option.value ?? ''}' is not allowed for keyword '${option.keyword}'`, 'error', option.location);
                     continue;
                 } else if (spec && spec.values && !spec.values.includes(option.value ?? '')) {
                     this.createDiagnostic(`Unknown option '${option.value ?? ''}' for keyword '${option.keyword}'`, 'error', option.location);
                     continue;
-                } else if (spec && spec.maxLength && (option.value ?? '').length > spec.maxLength) {
-                    this.createDiagnostic(`Value '${option.value ?? ''}' should not exceed a length of '${spec.maxLength}' characters`, 'warning', option.location);
-                    continue;
+                }
+
+                // If a note is added in the spec, add it as a trace diagnostic
+                if (spec && spec.note) {
+                    this.createDiagnostic(spec.note, 'trace', option.location);
                 }
             }
 

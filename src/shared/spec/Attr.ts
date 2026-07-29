@@ -57,31 +57,31 @@ export const ATTR_SPEC: Record<string, AttrKeywordSpec> =  {
         values: ['ON', 'OFF'],
         requiredValue: false,
         repeatable: false,
-        allowedInputRegex: /[A-Z0-9]/,
+        allowedInputRegex: /^[A-Z0-9]+$/,
         note: 'The COMBO keyword is accepted in order to support existing panel definitions that use it. However, it no longer affects the displayed panel.'
     },
     CSRGRP: {
         requiredValue: false,
         repeatable: false,
-        allowedInputRegex: /[0-9]/,
+        allowedInputRegex: /^[0-9]{2}/,
         maxLength: 2
     },
     CUADYN: {
         requiredValue: false,
         repeatable: false,
-        allowedInputRegex: /[A-Z0-9]/
+        allowedInputRegex: /^[A-Z0-9]+$/
     },
     DDLIST: {
         values: ['ON', 'OFF'],
         requiredValue: false,
         repeatable: false,
-        allowedInputRegex: /[A-Z0-9.]/,
+        allowedInputRegex: /^[A-Z0-9.]+$/,
         note: 'The DDLIST keyword is accepted in order to support existing panel definitions that use it. However, it no longer affects the displayed panel.'
     },
     DEPTH: {
         requiredValue: false,
         repeatable: false,
-        allowedInputRegex: /[0-9]/,
+        allowedInputRegex: /^[0-9]$/,
         maxLength: 1
     },
     FORMAT: {
@@ -113,7 +113,7 @@ export const ATTR_SPEC: Record<string, AttrKeywordSpec> =  {
         values: ['ON', 'OFF'],
         requiredValue: false,
         repeatable: false,
-        allowedInputRegex: /[A-Z0-9]/,
+        allowedInputRegex: /^[A-Z0-9]+$/,
         note: 'The LISTBOX keyword is accepted in order to support existing panel definitions that use it. However, it no longer affects the displayed panel.'
     },
     NOJUMP: {
@@ -135,13 +135,13 @@ export const ATTR_SPEC: Record<string, AttrKeywordSpec> =  {
         values: [ 'NULLS', 'USER'],
         requiredValue: false,
         repeatable: false,
-        allowedInputRegex: /[A-Z0-9]<\(\+\)\;\,\>\:\=\¬\s/
+        allowedInputRegex: /^[A-Z0-9<\(\+\)\;\,\>\:\=\¬\s]{1}/
     },
     PADC: {
         values: ['NULLS', 'USER'],
         requiredValue: false,
         repeatable: false,
-        allowedInputRegex: /[A-Z0-9]<\(\+\)\;\,\>\:\=\¬\s/
+        allowedInputRegex: /^[A-Z0-9<\(\+\)\;\,\>\:\=\¬\s]{1}/
     },
     PAS: {
         values: ['ON', 'OFF'],
@@ -156,7 +156,7 @@ export const ATTR_SPEC: Record<string, AttrKeywordSpec> =  {
     REP: {
         requiredValue: false,
         repeatable: false,
-        allowedInputRegex: /[A-Z0-9]/,
+        allowedInputRegex: /^[A-Z0-9]{1}/,
         maxLength: 1
     },
     SKIP: {
@@ -178,7 +178,7 @@ export const ATTR_SPEC: Record<string, AttrKeywordSpec> =  {
         requiredValue: false,
         repeatable: false,
         maxLength: 2,
-        allowedInputRegex: /[0-9]/,
+        allowedInputRegex: /^[0-9]{2}/,
         note: 'The WIDTH keyword is accepted in order to support existing panel definitions that use it. However, it no longer affects the displayed panel. '
     }
 }

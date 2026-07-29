@@ -9,9 +9,13 @@ export class BodySectionValidator extends BaseValidator {
     }
 
     validate(): ValidatorResult {
-        for (const statement of this.section.statements) {
-            if (statement.type !== AstNodeType.BodyLine) continue;
-            this.validateBodyLine(statement);
+        if (this.section.statements.length > 0) {
+            for (const statement of this.section.statements) {
+                if (statement.type !== AstNodeType.BodyLine) continue;
+                this.validateBodyLine(statement);
+            }
+        } else {
+            this.createDiagnostic(`Empty body section found`, 'info', this.section.location);
         }
         
         return { diagnostics: this.diagnostics }
