@@ -37,6 +37,25 @@ export class BodyParser extends Parser {
             const item = this.parseContent();
 
             if (item) {
+                if (item.type === AstNodeType.BodyText) {
+                    // Merge with previous token if it is also of type BodyText
+                    const previous = content[content.length - 1];
+
+                    if (previous && previous.type === AstNodeType.BodyText) {
+                        const previousLength = previous.location?.length ?? previous.value.length
+                        const itemLength = item.location?.length ?? item.value.length;
+
+                        previous.value += item.value;
+                        previous.location = {
+                            line: previous.location?.length ?? item.location?.line ?? 0,
+                            column: previous.location?.column ?? item.location?.column ?? 0,
+                            length: previousLength + itemLength
+                        };
+
+                        continue;
+                    }
+                }
+                
                 content.push(item);
                 continue;
             }
@@ -100,6 +119,15 @@ export class BodyParser extends Parser {
                 this.error(`BODY references undefined attribute '${attribute.value}'`, attribute, 'warning');
             }
 
+            // If the definition is not found, return it as a BodyText node
+            if (!definition) {
+                return {
+                    type: AstNodeType.BodyText,
+                    value: attribute.value ?? '',
+                    location: attribute.location
+                } satisfies BodyTextNode
+            }
+
             return {
                 type: AstNodeType.BodyAttributeReference,
                 value: attribute.value ?? '',
@@ -111,11 +139,6 @@ export class BodyParser extends Parser {
         const lexerError = this.parseLexerError();
 
         if (lexerError) return lexerError;
-
-        // if (this.match(TokenType.Error)) {
-        //     this.error(`Invalid BODY content`, this.previous);
-        //     return undefined;
-        // }
 
         return undefined;
     }

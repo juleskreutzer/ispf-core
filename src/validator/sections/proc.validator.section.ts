@@ -25,7 +25,6 @@ export class ProcSectionValidator extends BaseValidator {
             this.validateStatement(statement);
         }
 
-        console.log(this.referencedVariables);
         return { diagnostics: this.diagnostics, referencedVariables: this.referencedVariables };
     }
 
