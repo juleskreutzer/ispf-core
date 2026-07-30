@@ -54,7 +54,7 @@ export abstract class Parser {
 
         if (token) return token;
 
-        this.error(message ?? `Expected token '${type}' by found '${this.current,type}`, this.current);
+        this.error(message ?? `Expected token '${type}' but found '${this.current,type}`, this.current);
     }
 
     protected error(message: string, token: Token = this.current, severity: DiagnosticSeverity = 'error', origin: DiagnosticOrigin = 'PARSER'): Diagnostic {

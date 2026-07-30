@@ -68,7 +68,7 @@ export class ProcParser extends Parser {
 
         return {
             type: AstNodeType.ProcStatement,
-            command: command.type === TokenType.ProcCommand
+            command: command.type === TokenType.ProcKeyword
                 ? { type: AstNodeType.ProcKeyword, keyword: command.value ?? '', location: command.location }
                 : { type: AstNodeType.Identifier, name: command.value ?? '', location: command.location },
             argument: args,

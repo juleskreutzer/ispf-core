@@ -123,7 +123,7 @@ export class BodyParser extends Parser {
     private parseFieldVariable(text: Token): VariableReferenceNode | undefined {
         if (!this.currentAttribute || !this.isVariableFieldAttribute(this.currentAttribute)) return undefined;
 
-        const match = /^(?<name>[A-Z[A0Z0-9#@$]*)(?<padding>\s*)$/i.exec(text.value ?? '');
+        const match = /^(?<name>[A-Z][A0Z0-9#@$]*)(?<padding>\s*)$/i.exec(text.value ?? '');
 
         if (!match?.groups?.name) return undefined;
 

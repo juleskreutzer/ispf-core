@@ -1,9 +1,9 @@
 import { SectionType } from '../lexer/index.ts';
-import { AstNodeType } from '../parser/index.ts';4
-import { ATTR_SPEC,  createDefaultAttributes } from "../shared/index.ts";
+import { createDefaultAttributes } from "../shared/index.ts";
 import { AttrSectionValidator } from './sections/attr.validator.section.ts';
 import { BodySectionValidator } from './sections/body.validator.section.ts';
-import type { AttributeDefinitionNode, BodyAttributeReferenceNode, BodyLineNode, PanelAst } from '../parser/index.ts';
+import { ProcSectionValidator } from './sections/proc.validator.section.ts';
+import type { AttributeDefinitionNode, PanelAst } from '../parser/index.ts';
 import type { Diagnostic, ParserResult, ValidatorResult } from '../shared/index.ts';
 
 export class PanelValidator {
@@ -26,6 +26,7 @@ export class PanelValidator {
             this.ast = parserResult.ast;
         }
     }
+    
     public validate(): ValidatorResult {
         let attributes: Map<string, AttributeDefinitionNode> = createDefaultAttributes();
         let result;
@@ -40,6 +41,9 @@ export class PanelValidator {
                         break;
                     case SectionType.BODY:
                         this.diagnostics.push(...new BodySectionValidator(section, attributes).validate().diagnostics);
+                        break;
+                    case SectionType.PROC:
+                        this.diagnostics.push(...new ProcSectionValidator(section).validate().diagnostics);
                         break;
                     default:
                         this.diagnostics.push({

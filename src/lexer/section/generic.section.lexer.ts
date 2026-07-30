@@ -10,7 +10,7 @@ export class GenericSectionLexer extends SectionLexer {
             type: TokenType.Text,
             value: line,
             location: {
-                line: i,
+                line: this.startLine + i,
                 column: 0,
                 length: line.length
             }

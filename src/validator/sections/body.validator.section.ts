@@ -22,7 +22,9 @@ export class BodySectionValidator extends BaseValidator {
     }
 
     private validateBodyLine(line: BodyLineNode) {
+        let lineLength = 0;
         for (const node of line.content) {
+            lineLength += node.location!.length; 
             if (node.type !== AstNodeType.BodyAttributeReference) continue;
 
             if (!this.attributes) {
@@ -38,6 +40,10 @@ export class BodySectionValidator extends BaseValidator {
             }
 
             node.attribute = attribute;
+        }
+
+        if (lineLength > 80) {
+            this.createDiagnostic(`line ${line.location?.line} exceeds 80 characters. Total line length is ${lineLength}, possible data truncation`, 'warning', line.location);
         }
     }
 }
