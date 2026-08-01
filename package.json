@@ -5,10 +5,13 @@
   "keywords": [
     "ISPF",
     "Panel",
-    "Interpret",
+    "Lexer",
+    "Parser",
+    "Validator",
     "TypeScript",
     "z",
-    "z/OS"
+    "z/OS",
+    "IBM"
   ],
   "homepage": "https://github.com/juleskreutzer/ispf-core#readme",
   "bugs": {
