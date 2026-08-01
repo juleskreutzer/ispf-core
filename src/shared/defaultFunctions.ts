@@ -11,20 +11,20 @@ export function createDefaultAttributes(): Map<string, AttributeDefinitionNode> 
 }
 
 export function createDefaultAttribute(attributeChar: string, type: string, intens: string): AttributeDefinitionNode {
-        return {
-            type: AstNodeType.AttributeDefinition,
-            attributeChar,
-            options: [
-                {
-                    type: AstNodeType.AttributeOption,
-                    keyword: AttrKeyword.TYPE,
-                    value: type
-                },
-                {
-                    type: AstNodeType.AttributeOption,
-                    keyword: AttrKeyword.INTENS,
-                    value: intens
-                }
-            ]
-        };
-    }
+    return {
+        type: AstNodeType.AttributeDefinition,
+        attributeChar,
+        options: [
+            {
+                type: AstNodeType.AttributeOption,
+                keyword: AttrKeyword.TYPE,
+                value: type
+            },
+            {
+                type: AstNodeType.AttributeOption,
+                keyword: AttrKeyword.INTENS,
+                value: intens
+            }
+        ]
+    };
+}

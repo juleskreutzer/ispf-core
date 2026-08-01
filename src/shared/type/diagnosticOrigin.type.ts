@@ -1,1 +1,1 @@
-export type DiagnosticOrigin = 'LEXER' | 'PARSER' | 'VALIDATOR';
+export type DiagnosticOrigin = 'LEXER' | 'PARSER' | 'VALIDATOR' | 'LAYOUT';

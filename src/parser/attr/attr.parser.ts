@@ -1,12 +1,10 @@
 import { TokenType } from '../../lexer/index.ts';
 import { AstNodeType } from '../enum/index.ts';
 import { Parser } from '../parser.ts';
-import type { AttributeDefinitionNode, AttributeOptionNode, ErrorNode } from '../interface/index.ts';
+import type { AttributeOptionNode, ErrorNode } from '../interface/index.ts';
 import type { AttrKeywordToken, AttrValueToken } from '../../lexer/interface/index.ts';
 import type { Token } from '../../lexer/index.ts';
-
-
-export type AttrStatementNode = AttributeDefinitionNode | ErrorNode;
+import type { AttrStatementNode } from '../../shared/index.ts';
 
 export class AttrParser extends Parser {
     constructor(tokens: Token[]) {

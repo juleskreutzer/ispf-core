@@ -3,8 +3,7 @@ import { AttrKeyword, TokenType } from '../../lexer/index.ts';
 import { AstNodeType } from '../enum/index.ts';
 import type { AttributeDefinitionNode, AttributeOptionNode, BodyAttributeReferenceNode, BodyContentNode, BodyLineNode, BodyParserOptions, BodyTextNode, ErrorNode, VariableReferenceNode } from '../interface/index.ts';
 import type { Token } from '../../lexer/index.ts';
-
-export type BodyStatementNode = BodyLineNode | ErrorNode;
+import type { BodyStatementNode } from '../../shared/index.ts';
 
 export class BodyParser extends Parser {
     private readonly attributes: ReadonlyMap<string, AttributeDefinitionNode>;
@@ -146,7 +145,7 @@ export class BodyParser extends Parser {
     private parseFieldVariable(text: Token): VariableReferenceNode | undefined {
         if (!this.currentAttribute || !this.isVariableFieldAttribute(this.currentAttribute)) return undefined;
 
-        const match = /^(?<name>[A-Z][A0Z0-9#@$]*)(?<padding>\s*)$/i.exec(text.value ?? '');
+        const match = /^(?<name>[A-Z][A-Z0-9#@$]*)(?<padding>\s*)$/i.exec(text.value ?? '');
 
         if (!match?.groups?.name) return undefined;
 

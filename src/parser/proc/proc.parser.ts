@@ -2,9 +2,8 @@ import { Parser } from '../parser.ts';
 import { TokenType } from '../../lexer/index.ts';
 import { AstNodeType } from '../enum/index.ts';
 import type { Token } from '../../lexer/index.ts';
-import type { ProcExpressionNode, ErrorNode, ProcStatementNode } from '../interface/index.ts';
-
-export type ProcStatement = ProcStatementNode | ErrorNode
+import type { ProcExpressionNode } from '../interface/index.ts';
+import type { ProcStatement } from '../../shared/index.ts';
 
 const BUILTIN_FUNCTION_NAMES = new Set([
     'TRUNC', 'TRANS', 'PFK', 'LENGTH', 'UPPER', 'LVLINE', 'ADDSOSI', 'DELSOSI', 'ONEBYTE', 'TWOBYTE'
