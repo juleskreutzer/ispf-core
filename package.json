@@ -38,7 +38,7 @@
     "LICENSE"
   ],
   "scripts": {
-    "build": "tsdown --config-loader tsx",
+    "build": "tsdown --config-loader tsx --minify",
     "build:watch": "tsdown --watch --config-loader tsx",
     "test": "node --import tsx --test --experimental-test-coverage test/**/*.test.ts",
     "prepublishOnly": "npm run build",
