@@ -1,5 +1,5 @@
 {
-  "name": "@ispf/core",
+  "name": "ispf-core",
   "version": "1.0.0",
   "description": "ISPF Panel interpreter",
   "keywords": [
@@ -18,20 +18,38 @@
     "type": "git",
     "url": "git+https://github.com/juleskreutzer/ispf-core.git"
   },
-  "license": "ISC",
+  "license": "MIT",
   "author": "Jules Kreutzer",
   "type": "module",
-  "main": "index.js",
+  "main": "./dist/index.mjs",
+  "types": "./dist/index.d.mts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
     "build": "tsdown --config-loader tsx",
     "build:watch": "tsdown --watch --config-loader tsx",
-    "test": "node --import tsx --test --experimental-test-coverage test/**/*.test.ts"
+    "test": "node --import tsx --test --experimental-test-coverage test/**/*.test.ts",
+    "prepublishOnly": "npm run build",
+    "release:major": "changelog -M && git add CHANGELOG.md && git commit -m \"updated CHANGELOG.md\" && npm version major && git push origin && git push origin --tags",
+    "release:minor": "changelog -m && git add CHANGELOG.md && git commit -m \"updated CHANGELOG.md\" && npm version minor && git push origin && git push origin --tags",
+    "release:patch": "changelog -p && git add CHANGELOG.md && git commit -m \"updated CHANGELOG.md\" && npm version patch && git push origin && git push origin --tags",
+    "release:pre-release": "changelog -a && git add CHANGELOG.md && git commit -m \"updated CHANGELOG.md\" && npm version prerelease --preid alpha && git push origin && git push origin --tags"
   },
   "nyc": "^17.1.0",
   "devDependencies": {
     "@tsconfig/node-lts": "^24.0.0",
     "@tsconfig/node-ts": "^23.6.4",
     "@types/node": "^26.1.1",
+    "generate-changelog": "^1.8.0",
     "tsdown": "^0.22.14",
     "tsx": "^4.23.1",
     "typescript": "^7.0.2"

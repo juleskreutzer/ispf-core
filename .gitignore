@@ -144,3 +144,10 @@ vite.config.ts.timestamp-*
 
 # Ignore company test files
 .company_test_files/
+
+# Documentation folder
+docs/
+
+# Github folders
+.github/*
+!.github/workflows

@@ -1,5 +1,5 @@
 import { TokenType } from '../enum/index.ts';
-import { SectionLexer } from '../index.ts';
+import { SectionLexer } from '../section.lexer.ts';
 import type { Token } from '../interface/index.ts';
 
 const VARIABLE_REGEX = /^&[A-Z][A-Z0-9]+/i;
