@@ -15,7 +15,7 @@ The library is organized around four main stages:
 4. Layout generation
    - Produces a simplified layout representation suitable for rendering panels.
 
-This libarary currently support the `ATTR`, `BODY` and (partially) `PROC` sections.
+This library currently supports the `ATTR`, `BODY` and (partially) `PROC` sections.
 
 ## Installation
 
