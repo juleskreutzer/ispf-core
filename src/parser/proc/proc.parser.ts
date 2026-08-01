@@ -11,11 +11,24 @@ const BUILTIN_FUNCTION_NAMES = new Set([
 const LOGICAL_OPERATORS = new Set(['AND', 'OR']);
 const PREFIX_OPERATORS = new Set(['NOT', '-', '¬']);
 
+/**
+ * Parses PROC sections into expressions, statements, and function calls.
+ */
 export class ProcParser extends Parser {
+    /**
+     * Creates a processor parser for the supplied token stream.
+     *
+     * @param tokens The tokens representing the PROC section.
+     */
     constructor(tokens: Token[]) {
         super(tokens);
     }
 
+    /**
+     * Parses all PROC statements in the current section.
+     *
+     * @returns Parsed PROC statements.
+     */
     parse(): ProcStatement[] {
         const statements: ProcStatement[] = [];
 
@@ -30,6 +43,11 @@ export class ProcParser extends Parser {
         return statements;
     }
 
+    /**
+     * Parses a single PROC statement from the current stream.
+     *
+     * @returns A PROC statement node or an error node.
+     */
     private parseStatement(): ProcStatement | undefined {
         const first = this.current;
         if ((this.check(TokenType.Variable) || this.check(TokenType.Identifier)) && this.check(TokenType.Operator, 1) && this.peek(1).value === '=') {
@@ -75,6 +93,12 @@ export class ProcParser extends Parser {
         };
     }
 
+    /**
+     * Parses an expression using precedence-based parsing.
+     *
+     * @param minPrecedence The minimum precedence required for the next operator.
+     * @returns A parsed expression node.
+     */
     private parseExpression(minPrecedence = 0): ProcExpressionNode | undefined {
         let left = this.parsePrefix();
         if (!left) return undefined;
@@ -106,6 +130,11 @@ export class ProcParser extends Parser {
         return left;
     }
 
+    /**
+     * Parses a prefix expression, including unary operators and parenthesized groups.
+     *
+     * @returns A parsed prefix expression node.
+     */
     private parsePrefix(): ProcExpressionNode | undefined {
         const operator = this.currentOperator();
         if (operator) {
@@ -133,6 +162,11 @@ export class ProcParser extends Parser {
         return this.parsePrimary();
     }
 
+    /**
+     * Parses the primary expression forms such as variables, literals, and identifiers.
+     *
+     * @returns A parsed primary expression node.
+     */
     private parsePrimary(): ProcExpressionNode | undefined {
         const token = this.match(TokenType.Variable, TokenType.String, TokenType.Text, TokenType.Number, TokenType.ProcKeyword, TokenType.Identifier);
 
@@ -173,12 +207,23 @@ export class ProcParser extends Parser {
         }
     }
 
+    /**
+     * Returns the current operator token when one is present.
+     *
+     * @returns The current operator token, or undefined.
+     */
     private currentOperator(): Token | undefined {
         if (this.check(TokenType.Operator)) return this.current;
         if ((this.check(TokenType.Identifier) || this.check(TokenType.ProcKeyword)) && LOGICAL_OPERATORS.has((this.current.value ?? '').toUpperCase())) return this.current;
         return undefined;
     }
 
+    /**
+     * Computes the precedence of a PROC operator.
+     *
+     * @param operator The operator string to evaluate.
+     * @returns The operator precedence value.
+     */
     private precedence(operator: string): number {
         switch(operator.toUpperCase()) {
             case '=':
@@ -209,14 +254,30 @@ export class ProcParser extends Parser {
         }
     }
 
+    /**
+     * Checks whether the current token is a parenthesis with the supplied value.
+     *
+     * @param value The expected parenthesis character.
+     * @returns True when the current token is the requested parenthesis.
+     */
     private checkParenthesis(value: string): boolean { 
         return this.check(TokenType.Parenthesis) && this.current.value === value
     }
 
+    /**
+     * Consumes a closing parenthesis when present.
+     *
+     * @returns The consumed token, or undefined.
+     */
     private matchClosingParenthesis(): Token | undefined {
         return this.checkParenthesis(')') ? this.advance() : undefined;
     }
 
+    /**
+     * Consumes a comma token when present.
+     *
+     * @returns The consumed token, or undefined.
+     */
     private matchComma(): Token | undefined {
         return this.check(TokenType.Operator) && this.current.value === ',' ? this.advance() : undefined;
     }

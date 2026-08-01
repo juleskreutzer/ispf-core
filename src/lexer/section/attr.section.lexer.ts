@@ -6,7 +6,16 @@ import type { Token } from '../interface/index.ts';
 // Using https://www.ibm.com/docs/en/zos/3.2.0?topic=section-formatting-attribute-statements
 const VALID_ATTRIBUTE_CHAR = /^[@#$%~^*!+_\-]$/;
 
+/**
+ * @class AttrSectionLexer
+ * 
+ * This class is responsible for converting the ATTR section into tokens
+ */
 export class AttrSectionLexer extends SectionLexer {
+    /**
+     * Lexs ATTR section
+     * @returns Token[]
+     */
     lex(): Token[] {
         const tokens: Token[] = []
 
@@ -48,6 +57,13 @@ export class AttrSectionLexer extends SectionLexer {
         return tokens;
     }
 
+    /**
+     * Scans keywords that are provided after the attribute char
+     * @param input remaining part of the line after stripping attr char
+     * @param line Line number in panel definition
+     * @param offset Position of keyword start
+     * @param tokens Existing token array
+     */
     private scanKeywords(input: string, line: number, offset: number, tokens: Token[]) {
         const regex = /([A-Z]+)(?:\(([^)]*)\))?/gi;
 

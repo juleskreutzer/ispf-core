@@ -6,13 +6,26 @@ import type { CommentNode, ErrorNode, PanelAst, SectionAst, SectionStatement, Te
 import type { SectionStartToken, Token } from '../lexer/index.ts';
 import type { ParserResult } from '../shared/index.ts';
 
+/**
+ * Parses a full panel source into sections and statements.
+ */
 export class PanelParser extends Parser {
     private readonly attributes = createDefaultAttributes();
 
+    /**
+     * Creates a panel parser for the supplied token stream.
+     *
+     * @param tokens The tokens representing the panel source.
+     */
     constructor(tokens: Token[]) {
         super(tokens);
     }
 
+    /**
+     * Parses the complete panel and returns the AST plus diagnostics.
+     *
+     * @returns The parsed panel result.
+     */
     parse(): ParserResult {
         const sections: SectionAst[] = [];
 
@@ -38,6 +51,11 @@ export class PanelParser extends Parser {
 
     }
 
+    /**
+     * Parses the next section from the current token stream.
+     *
+     * @returns A section AST node, or undefined when parsing cannot continue.
+     */
     private parseSection(): SectionAst | undefined {
         const sectionStart = this.match(TokenType.SectionStart) as SectionStartToken | undefined;
 
@@ -59,6 +77,11 @@ export class PanelParser extends Parser {
         };
     }
 
+    /**
+     * Collects tokens belonging to the current section until the next section start.
+     *
+     * @returns The tokens for the current section.
+     */
     private collectSectionTokens(): Token[] {
         const tokens: Token[] = [];
 
@@ -69,6 +92,13 @@ export class PanelParser extends Parser {
         return tokens;
     }
 
+    /**
+     * Parses the statements that belong to a specific section type.
+     *
+     * @param sectionType The section being parsed.
+     * @param tokens The tokens belonging to that section.
+     * @returns Parsed statements for the section.
+     */
     private parseSectionStatements(sectionType: SectionType, tokens: Token[]): SectionStatement[] {
         let statements;
         switch (sectionType) {
@@ -101,6 +131,12 @@ export class PanelParser extends Parser {
         }
     }
 
+    /**
+     * Parses tokens that do not belong to a specialized section parser.
+     *
+     * @param tokens The tokens to convert into generic AST statements.
+     * @returns Generic statements such as text or comments.
+     */
     private parseGenericStatements(tokens: Token[]): SectionStatement[] {
         return tokens.flatMap((token): SectionStatement[] => {
             switch(token.type) {

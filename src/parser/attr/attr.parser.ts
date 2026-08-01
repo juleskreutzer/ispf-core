@@ -6,11 +6,24 @@ import type { AttrKeywordToken, AttrValueToken } from '../../lexer/interface/ind
 import type { Token } from '../../lexer/index.ts';
 import type { AttrStatementNode } from '../../shared/index.ts';
 
+/**
+ * Parses attribute sections into attribute definition and option nodes.
+ */
 export class AttrParser extends Parser {
+    /**
+     * Creates an attribute parser for the supplied token stream.
+     *
+     * @param tokens The tokens representing the attribute section.
+     */
     constructor(tokens: Token[]) {
         super(tokens);
     }
 
+    /**
+     * Parses all attribute definitions in the current section.
+     *
+     * @returns Attribute statements for the section.
+     */
     parse(): AttrStatementNode[] {
         const definitions: AttrStatementNode[] = [];
 
@@ -29,6 +42,11 @@ export class AttrParser extends Parser {
         return definitions;
     }
 
+    /**
+     * Parses a single attribute definition from the current token stream.
+     *
+     * @returns An attribute definition node, or undefined when parsing cannot continue.
+     */
     private parseDefinition(): AttrStatementNode | undefined {
         const attributeChar = this.match(TokenType.AttributeChar);
 
@@ -66,6 +84,11 @@ export class AttrParser extends Parser {
         };
     }
 
+    /**
+     * Parses a single attribute option such as a keyword and optional value.
+     *
+     * @returns An attribute option node or an error node.
+     */
     private parseOption(): AttributeOptionNode | ErrorNode | undefined {
         const keyword = this.match(TokenType.AttributeKeyword) as AttrKeywordToken | undefined;
 

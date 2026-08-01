@@ -5,15 +5,29 @@ import type { AttributeDefinitionNode, AttributeOptionNode, BodyAttributeReferen
 import type { Token } from '../../lexer/index.ts';
 import type { BodyStatementNode } from '../../shared/index.ts';
 
+/**
+ * Parses BODY sections into text, variables, and attribute references.
+ */
 export class BodyParser extends Parser {
     private readonly attributes: ReadonlyMap<string, AttributeDefinitionNode>;
     private currentAttribute: AttributeDefinitionNode | undefined;
 
+    /**
+     * Creates a body parser with an optional attribute-definition map.
+     *
+     * @param tokens The tokens representing the body section.
+     * @param options Parsing options including known attributes.
+     */
     constructor(tokens: Token[], options: BodyParserOptions = {}) {
         super(tokens);
         this.attributes = options.attributes ?? new Map();
     }
 
+    /**
+     * Parses the body section into one or more body lines.
+     *
+     * @returns Parsed body statements.
+     */
     parse(): BodyStatementNode[] {
         const lines: BodyStatementNode[] = [];
 
@@ -28,6 +42,11 @@ export class BodyParser extends Parser {
         return lines;
     }
 
+    /**
+     * Parses a single body line into content nodes.
+     *
+     * @returns A body line node or an error node.
+     */
     private parseLine(): BodyStatementNode | undefined {
         const content: BodyContentNode[] = [];
         const firstToken = this.current;
@@ -83,6 +102,11 @@ export class BodyParser extends Parser {
         }
     }
 
+    /**
+     * Parses the next content item in a body line.
+     *
+     * @returns A content node or an error node.
+     */
     private parseContent(): BodyContentNode | ErrorNode | undefined {
         const text = this.match(TokenType.Text);
 
@@ -142,6 +166,12 @@ export class BodyParser extends Parser {
         return undefined;
     }
 
+    /**
+     * Detects field-variable references when the current attribute is a field-like attribute.
+     *
+     * @param text The text token to inspect.
+     * @returns A variable reference node when the text matches a field-variable pattern.
+     */
     private parseFieldVariable(text: Token): VariableReferenceNode | undefined {
         if (!this.currentAttribute || !this.isVariableFieldAttribute(this.currentAttribute)) return undefined;
 
@@ -161,6 +191,12 @@ export class BodyParser extends Parser {
         };
     }
 
+    /**
+     * Checks whether a given attribute is a field-style attribute that can contain variable references.
+     *
+     * @param attribute The attribute definition to inspect.
+     * @returns True when the attribute is a field attribute.
+     */
     private isVariableFieldAttribute(attribute: AttributeDefinitionNode): boolean {
         const typeOptions = attribute.options.find((option) => (option as AttributeOptionNode).keyword === AttrKeyword.TYPE);
         const type = typeOptions?.value?.toUpperCase();

@@ -3,8 +3,22 @@ import { AttrSectionLexer, BodySectionLexer, GenericSectionLexer, ProcSectionLex
 import type { Token } from './interface/index.ts';
 import * as fs from 'fs'
 
+/**
+ * @class PanelLexer
+ * 
+ * This class lexes a panel based on either a file path or the raw panel data. It is used as input for further processing of the panel (e.g parsing, validation, layout generation)
+ */
 export class PanelLexer {
 
+    /**
+     * Lexs file
+     * @param source path to the panel source file
+     * @param options optional encoding and flag options, see {@link node:fs}
+     * @returns Token[]
+     * 
+     * @remark
+     * Calls {@link lex()} internally
+     */
     lexFile(source: string, options: { encoding: BufferEncoding | undefined, flag: string | undefined}): Token[] {
         if(fs.existsSync(source)) {
             const data = fs.readFileSync(source, { encoding: (options && options.encoding) ?? 'utf8', flag: (options && options.flag) ?? undefined})
@@ -14,6 +28,11 @@ export class PanelLexer {
         }
     }
 
+    /**
+     * Lexs the raw source of a panel definition
+     * @param source Panel source
+     * @returns Token[]
+     */
     lex(source: string): Token[] {
         const lines = source.split(/\r?\n/);
 
@@ -38,6 +57,7 @@ export class PanelLexer {
                 }
             });
 
+            // Each supported section has its own lexer
             switch (currentSection) {
                 case SectionType.ATTR:
                     tokens.push(...new AttrSectionLexer(currentLines, startLine).lex());
@@ -79,7 +99,5 @@ export class PanelLexer {
         flush();
 
         return tokens;
-
     }
-
 }

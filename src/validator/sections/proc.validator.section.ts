@@ -3,6 +3,11 @@ import { BaseValidator } from './base.validator.section.ts';
 import type { ProcValidatorResult } from '../../shared/index.ts';
 import type { ProcExpressionNode, ProcStatementNode, SectionAst, VariableReferenceNode } from '../../parser/index.ts';
 
+/**
+ * @class ProcSectionValidator
+ * 
+ * This class is responsible for the PROC section validation
+ */
 export class ProcSectionValidator extends BaseValidator {
     private referencedVariables: Map<string, VariableReferenceNode>;
     constructor(section: SectionAst) {
@@ -12,6 +17,10 @@ export class ProcSectionValidator extends BaseValidator {
         this.referencedVariables = new Map<string, VariableReferenceNode>;
     }
 
+    /**
+     * Validate the current PROC section
+     * @returns ProcValidatorResult containing a map of used variables
+     */
     override validate(): ProcValidatorResult {
 
         for (const statement of this.section.statements) {
@@ -28,6 +37,11 @@ export class ProcSectionValidator extends BaseValidator {
         return { diagnostics: this.diagnostics, referencedVariables: this.referencedVariables };
     }
 
+    /**
+     * Validates statement
+     * @param statement 
+     * @returns  
+     */
     private validateStatement(statement: ProcStatementNode) {
         if (!statement.command) {
             this.createDiagnostic(`PROC statement is missing a command`, 'error', statement.location);

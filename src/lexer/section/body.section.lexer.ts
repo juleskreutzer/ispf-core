@@ -7,7 +7,17 @@ const ATTRIBUTE_CHAR_REGEX = /^[@#$%~^*!+_\-]$/;
 
 // Using https://www.ibm.com/docs/en/zos/3.2.0?topic=sections-defining-body-section
 
+/**
+ * @class BodySectionLexer
+ * 
+ * This class is responsible for converting the BODY section into tokens
+ */
 export class BodySectionLexer extends SectionLexer {
+
+    /**
+     * Lexs BODY section
+     * @returns Token[]
+     */
     lex(): Token[] {
         const tokens: Token[] = [];
 
@@ -27,6 +37,12 @@ export class BodySectionLexer extends SectionLexer {
         return tokens;
     }
 
+    /**
+     * Scans line
+     * @param line Current line
+     * @param lineNumber Line number in panel definition
+     * @param tokens Array of previous created tokens
+     */
     private scanLine(line: string, lineNumber: number, tokens: Token[]) {
         let position = 0;
         let textStart = 0;

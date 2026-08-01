@@ -4,12 +4,21 @@ import { BaseValidator } from './base.validator.section.ts';
 import type { AttrValidatorResult, ValidatorResult } from '../../shared/index.ts';
 import { AttrKeyword } from '../../lexer/index.ts';
 
+/**
+ * @class AttrSectionValidator
+ * 
+ * This class is responsible for the validation of the ATTR section
+ */
 export class AttrSectionValidator extends BaseValidator {
 
     constructor(section: SectionAst) {
         super(section);
     }
 
+    /**
+     * Validate current ATTR section
+     * @returns Result of the ATTR validation additionally containing a map of attributes that are defined
+     */
     override validate(): AttrValidatorResult {
         const table = createDefaultAttributes(); // Generates default % + _ attributes
         const panelAttributes = new Set<string>();

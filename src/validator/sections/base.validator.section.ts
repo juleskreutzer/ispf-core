@@ -2,6 +2,12 @@ import type { SourceLocation, Token } from '../../lexer/index.ts';
 import type { AttributeDefinitionNode, SectionAst } from '../../parser/index.ts';
 import type { Diagnostic, DiagnosticOrigin, DiagnosticSeverity, ValidatorResult } from '../../shared/index.ts';
 
+/**
+ * @class BaseValidator
+ * @abstract
+ * 
+ * Abstract class that is used by the specific section validation classes
+ */
 export abstract class BaseValidator {
     private validatorDiagnostics: Diagnostic[]
     private readonly _section: SectionAst;
@@ -39,7 +45,4 @@ export abstract class BaseValidator {
         this.validatorDiagnostics.push(diag);
         return diag;
     }
-
-
-
 }

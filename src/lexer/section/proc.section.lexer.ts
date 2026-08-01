@@ -7,7 +7,17 @@ const VARIABLE_REGEX = /^&[A-Za-z0-9?!._]+/i;
 const IDENTIFIER_REGEX = /^[A-Z][A-Z0-9_-]*/i;
 const OPERATOR_REGEX = /^(=|<>|<=|>=|<|>|\+|-|\*|\/|,)/;
 
+/**
+ * @class ProcSectionLexer
+ * 
+ * This class is responsible for converting PROC section into tokens
+ */
 export class ProcSectionLexer extends SectionLexer {
+
+    /**
+     * Lexs PROC section
+     * @returns Token[]
+     */
     lex(): Token[] {
         const tokens: Token[] = [];
 
@@ -18,6 +28,12 @@ export class ProcSectionLexer extends SectionLexer {
         return tokens;
     }
 
+    /**
+     * Scans line
+     * @param line Current line 
+     * @param lineNumber Line number in panel definition
+     * @param tokens Array of previous created tokens
+     */
     private scanLine(line: string, lineNumber: number, tokens: Token[]) {
         let position = 0;
 

@@ -4,6 +4,11 @@ import type { BodyStatementNode, Diagnostic } from "../shared/index.ts";
 import type { ValidatedPanel } from "../validator/index.ts";
 import { ElementType, type ElementLayout, type PanelBodyLineLayout, type PanelLayout } from "./interface/index.ts";
 
+/**
+ * @class PanelLayoutGenerator
+ * 
+ * This class is responsible for generating the layout that can be used by exteral package to render the panel
+ */
 export class PanelLayoutGenerator {
     private body: SectionAst;
     private panel: ValidatedPanel;
@@ -26,21 +31,12 @@ export class PanelLayoutGenerator {
 
         this.diagnostics = panel.diagnostics;
         this.lines = [];
-        
-        // if (panelAst.sections.length < 1) {
-        //     throw new Error(`No input sections received to generate layout for provided input panel`);
-        // }
-        // this.ast = panelAst;
-
-        // const temp: SectionAst | undefined = this.ast.sections.find(v => v.sectionType === SectionType.BODY);
-
-        // if (temp) {
-        //     this.body = temp;
-        // } else {
-        //     throw new Error(`No BODY section found for provided input panel`);
-        // }'
     }
 
+    /**
+     * Generate the panel layout based on a previously created panel AST
+     * @returns PanelLayout representing each line of the panel in layout elements such as text, input, header
+     */
     generate(): PanelLayout {
         if (this.body.statements.length > 0) {
             for (const statement of this.body.statements) {
@@ -61,11 +57,17 @@ export class PanelLayoutGenerator {
         }
     }
 
+    /**
+     * Process the current body line from the AST
+     * @param line {@link BodyLineNode} representing the current AST elements in the line
+     */
     private processBodyLine(line: BodyLineNode) {
         let currentAttr: AttributeDefinitionNode = this.panel.body.attributes.get('+')!; // + attribute is a default attribute and should always exist
         let layoutLine: ElementLayout[] = [];
+
         for (const node of line.content) {
             if (node.type === AstNodeType.BodyAttributeReference) {
+                // Used to determine how next node should be formatted
                 currentAttr = this.panel.body.attributes.get(node.attribute!.attributeChar)!;
             } else {
                 const value = this.formatElement(currentAttr, node);
@@ -78,6 +80,12 @@ export class PanelLayoutGenerator {
         this.lines.push({ elements: layoutLine });
     }
 
+    /**
+     * Format current node based on its type
+     * @param attr {@link AttributeDefinitionNode} that is currently into effect, affecting how the element should be rendered
+     * @param element {@link BodyContentNode} current element that will be processed
+     * @returns ElementLayout or undefined if the current {@link BodyContentNode.type} is not supported
+     */
     private formatElement(attr: AttributeDefinitionNode, element: BodyContentNode): ElementLayout | undefined {
         switch(element.type) {
             case AstNodeType.BodyText:
@@ -96,7 +104,18 @@ export class PanelLayoutGenerator {
 
     }
 
+    /**
+     * Format current element as a `text` layout element
+     * @param text Value for the current element
+     * @param attr {@link AttributeDefinitionNode} which options will be used to determine how the element should be created
+     * @returns ElementLayout
+     * 
+     * @remark
+     * Consume is responsible to adhere to any additional options that are returned from this method.
+     * E.g if `caps: true`, the `value` should be converted to uppercase. This is not done automatically. 
+     */
     private formatText(text: string, attr: AttributeDefinitionNode): ElementLayout {
+        // Check if the content should be written in caps
         const caps = attr.options.find(v => v.type === AstNodeType.AttributeOption && v.keyword === AttrKeyword.CAPS && (v.value === 'ON' || v.value === 'IN' || v.value === 'OUT')) ? true : false;
         
         return {
@@ -107,6 +126,13 @@ export class PanelLayoutGenerator {
         }
     }
 
+    /**
+     * Format current element as a `input` layout element
+     * @param id ID that should be used to identify the input element
+     * @param [fieldLength] Length of the field, defaults to 0
+     * @param attr {@link AttributeDefinitionNode} which options will be used to determine how the element should be created
+     * @returns ElementLayout
+     */
     private formatInput(id: string, fieldLength: number = 0, attr: AttributeDefinitionNode): ElementLayout {
         return {
             type: ElementType.INPUT,
