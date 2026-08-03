@@ -117,12 +117,15 @@ export class PanelLayoutGenerator {
     private formatText(text: string, attr: AttributeDefinitionNode): ElementLayout {
         // Check if the content should be written in caps
         const caps = attr.options.find(v => v.type === AstNodeType.AttributeOption && v.keyword === AttrKeyword.CAPS && (v.value === 'ON' || v.value === 'IN' || v.value === 'OUT')) ? true : false;
+        const intensify = attr.options.find(v => v.type === AstNodeType.AttributeOption && v.keyword === AttrKeyword.INTENS && v.value === 'HIGH') ? true : false;
         
         return {
             type: ElementType.TEXT,
             value: text,
             length: text.length,
-            caps: caps
+            caps: caps,
+            intensify: intensify,
+            color: this.generateColor(attr)
         }
     }
 
@@ -139,5 +142,59 @@ export class PanelLayoutGenerator {
             id: id,
             length: fieldLength
         }
+    }
+
+    private generateColor(attr: AttributeDefinitionNode): string {
+        const color = attr.options.find(v => v.type === AstNodeType.AttributeOption && v.keyword === AttrKeyword.COLOR);
+        let colorValue = '';
+
+        if (color && color.value) {
+            colorValue = color.value.toLowerCase();
+            if (colorValue === 'turq') {
+                colorValue = 'turquoise'; // ISPF used abbreviation for turquoise, but we want to use the full name in the layout
+            }
+        } else {
+            // Color not found in attribute definition
+            this.diagnostics.push({
+                message: `No color found for attribute '${attr.attributeChar}', using fallback`,
+                origin: 'LAYOUT',
+                severity: 'trace'
+            });
+
+            const type = attr.options.find(v => v.type === AstNodeType.AttributeOption && v.keyword === AttrKeyword.TYPE);
+            const intens = attr.options.find(v => v.type === AstNodeType.AttributeOption && v.keyword === AttrKeyword.INTENS);
+            if (type && type.value) {
+                switch (type.value.toUpperCase()) {
+                    case 'TEXT':
+                    case 'OUTPUT':
+                        if (intens && intens.value && intens.value.toUpperCase() === 'HIGH') {
+                            colorValue = 'white';
+                        } else {
+                            colorValue = 'blue';
+                        }
+                        break;
+                    case 'INPUT':
+                        if (intens && intens.value && intens.value.toUpperCase() === 'HIGH') {
+                            colorValue = 'red';
+                        } else {
+                            colorValue = 'green';
+                        }
+                        break;
+                    default:
+                        colorValue = 'white';
+                }
+
+            } else {
+                this.diagnostics.push({
+                    message: `Unable to determine type for attribute '${attr.attributeChar}', using fallback color 'white'`,
+                    origin: 'LAYOUT',
+                    severity: 'trace'
+                });
+
+                colorValue = 'white';
+            }
+        }
+
+        return colorValue;
     }
 }
