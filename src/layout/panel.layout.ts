@@ -115,9 +115,11 @@ export class PanelLayoutGenerator {
      * E.g if `caps: true`, the `value` should be converted to uppercase. This is not done automatically. 
      */
     private formatText(text: string, attr: AttributeDefinitionNode): ElementLayout {
-        // Check if the content should be written in caps
-        const caps = attr.options.find(v => v.type === AstNodeType.AttributeOption && v.keyword === AttrKeyword.CAPS && (v.value === 'ON' || v.value === 'IN' || v.value === 'OUT')) ? true : false;
-        const intensify = attr.options.find(v => v.type === AstNodeType.AttributeOption && v.keyword === AttrKeyword.INTENS && v.value === 'HIGH') ? true : false;
+        const capsValue = this.getAttributeOptionValue(attr, AttrKeyword.CAPS, true);
+        const caps = capsValue === 'ON' || capsValue === 'IN' || capsValue === 'OUT';
+        
+        const intensValue = this.getAttributeOptionValue(attr, AttrKeyword.INTENS, true);
+        const intensify = intensValue === 'HIGH';
         
         return {
             type: ElementType.TEXT,
@@ -125,7 +127,8 @@ export class PanelLayoutGenerator {
             length: text.length,
             caps: caps,
             intensify: intensify,
-            color: this.generateColor(attr)
+            color: this.generateColor(attr),
+            justify: this.generateJustify(attr)
         }
     }
 
@@ -144,57 +147,100 @@ export class PanelLayoutGenerator {
         }
     }
 
-    private generateColor(attr: AttributeDefinitionNode): string {
-        const color = attr.options.find(v => v.type === AstNodeType.AttributeOption && v.keyword === AttrKeyword.COLOR);
-        let colorValue = '';
+    /**
+     * Find an attribute option by keyword
+     * 
+     * @private
+     * @param attr Attribute definition to search
+     * @param keyword The keyword to find
+     * @return The attribute option or undefined
+     */
+    private findAttributeOption(attr: AttributeDefinitionNode, keyword: AttrKeyword) {
+        return attr.options.find(v => v.type === AstNodeType.AttributeOption && v.keyword === keyword);
+    }
 
-        if (color && color.value) {
-            colorValue = color.value.toLowerCase();
-            if (colorValue === 'turq') {
-                colorValue = 'turquoise'; // ISPF used abbreviation for turquoise, but we want to use the full name in the layout
-            }
-        } else {
-            // Color not found in attribute definition
+    /**
+     * Get the value of an attribute option, optionally converted to uppercase
+     * 
+     * @private
+     * @param attr Attribute definition to search
+     * @param keyword The keyword to find
+     * @param toUpper Whether to convert to uppercase
+     * @return The option value or undefined
+     */
+    private getAttributeOptionValue(attr: AttributeDefinitionNode, keyword: AttrKeyword, toUpper: boolean = false): string | undefined {
+        const option = this.findAttributeOption(attr, keyword);
+        if (!option?.value) return undefined;
+        return toUpper ? option.value.toUpperCase() : option.value;
+    }
+
+    /**
+     * Generate the text color that should be used for this element
+     * 
+     * If color is not set, takes TYPE and INTENS keywords into account or falls back to `white`
+     *
+     * @private
+     * @param {AttributeDefinitionNode} attr Attribute definition that is currently in effect
+     * @return {string} Color name
+     */
+    private generateColor(attr: AttributeDefinitionNode): string {
+        const colorValue = this.getAttributeOptionValue(attr, AttrKeyword.COLOR, false);
+        
+        if (colorValue) {
+            const normalized = colorValue.toLowerCase();
+            return normalized === 'turq' ? 'turquoise' : normalized;
+        }
+
+        // Color not found, use TYPE and INTENS for fallback
+        this.diagnostics.push({
+            message: `No color found for attribute '${attr.attributeChar}', using fallback`,
+            origin: 'LAYOUT',
+            severity: 'trace'
+        });
+
+        const typeValue = this.getAttributeOptionValue(attr, AttrKeyword.TYPE, true);
+        if (!typeValue) {
             this.diagnostics.push({
-                message: `No color found for attribute '${attr.attributeChar}', using fallback`,
+                message: `Unable to determine type for attribute '${attr.attributeChar}', using fallback color 'white'`,
                 origin: 'LAYOUT',
                 severity: 'trace'
             });
-
-            const type = attr.options.find(v => v.type === AstNodeType.AttributeOption && v.keyword === AttrKeyword.TYPE);
-            const intens = attr.options.find(v => v.type === AstNodeType.AttributeOption && v.keyword === AttrKeyword.INTENS);
-            if (type && type.value) {
-                switch (type.value.toUpperCase()) {
-                    case 'TEXT':
-                    case 'OUTPUT':
-                        if (intens && intens.value && intens.value.toUpperCase() === 'HIGH') {
-                            colorValue = 'white';
-                        } else {
-                            colorValue = 'blue';
-                        }
-                        break;
-                    case 'INPUT':
-                        if (intens && intens.value && intens.value.toUpperCase() === 'HIGH') {
-                            colorValue = 'red';
-                        } else {
-                            colorValue = 'green';
-                        }
-                        break;
-                    default:
-                        colorValue = 'white';
-                }
-
-            } else {
-                this.diagnostics.push({
-                    message: `Unable to determine type for attribute '${attr.attributeChar}', using fallback color 'white'`,
-                    origin: 'LAYOUT',
-                    severity: 'trace'
-                });
-
-                colorValue = 'white';
-            }
+            return 'white';
         }
 
-        return colorValue;
+        const intensValue = this.getAttributeOptionValue(attr, AttrKeyword.INTENS, true);
+        const isHighIntensity = intensValue === 'HIGH';
+
+        const colorMap: Record<string, { high: string; normal: string }> = {
+            'TEXT': { high: 'white', normal: 'blue' },
+            'OUTPUT': { high: 'white', normal: 'blue' },
+            'INPUT': { high: 'red', normal: 'green' }
+        };
+
+        const colors = colorMap[typeValue];
+        return colors ? (isHighIntensity ? colors.high : colors.normal) : 'white';
+    }
+
+    /**
+     * Generate justification string
+     * 
+     * Converts ISPF JUST keyword values to CSS text-align values.
+     * Defaults to `none` (ISPF's ASIS equivalent)
+     *
+     * @private
+     * @param {AttributeDefinitionNode} attr Attribute definition
+     * @return {string} Justify value (left, right, or none)
+     */
+    private generateJustify(attr: AttributeDefinitionNode): string {
+        const justifyValue = this.getAttributeOptionValue(attr, AttrKeyword.JUST, true);
+        if (!justifyValue) return 'none';
+
+        const justifyMap: Record<string, string> = {
+            'LEFT': 'left',
+            'RIGHT': 'right',
+            'ASIS': 'none'
+        };
+
+        return justifyMap[justifyValue] ?? 'none';
     }
 }

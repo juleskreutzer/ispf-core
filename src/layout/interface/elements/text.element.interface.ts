@@ -5,4 +5,5 @@ export interface TextElement extends BaseElement {
     caps?: boolean;
     intensify?: boolean;
     color?: string;
+    justify?: string;
 }
