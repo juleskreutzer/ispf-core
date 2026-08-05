@@ -1,6 +1,6 @@
-import type { BaseElement, ElementType } from './base.element.interface.ts';
+import type { ElementType, IBaseElement } from './base.element.interface.ts';
 
-export interface TextElement extends BaseElement {
+export interface ITextElement extends IBaseElement {
     type: ElementType.TEXT;
     caps?: boolean;
     intensify?: boolean;

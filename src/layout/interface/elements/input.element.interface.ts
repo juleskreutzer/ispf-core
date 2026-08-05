@@ -1,6 +1,6 @@
-import type { BaseElement, ElementType } from "./base.element.interface.ts";
+import type { ElementType, IBaseElement } from "./base.element.interface.ts";
 
-export interface InputElement extends BaseElement {
+export interface IInputElement extends IBaseElement {
     type: ElementType.INPUT;
     id: string;
 }

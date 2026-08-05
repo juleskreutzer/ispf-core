@@ -1,8 +1,8 @@
-import type { HeaderElement } from './header.element.interface.ts';
-import type { InputElement } from './input.element.interface.ts';
-import type { TextElement } from './text.element.interface.ts';
+import type { IHeaderElement } from './header.element.interface.ts';
+import type { IInputElement } from './input.element.interface.ts';
+import type { ITextElement } from './text.element.interface.ts';
 
-export interface BaseElement {
+export interface IBaseElement {
     type: ElementType;
     length: number;
     value?: string;
@@ -15,6 +15,6 @@ export enum ElementType {
 }
 
 export type ElementLayout = 
-    | TextElement
-    | HeaderElement
-    | InputElement
+    | ITextElement
+    | IHeaderElement
+    | IInputElement

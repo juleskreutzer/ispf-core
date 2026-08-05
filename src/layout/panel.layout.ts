@@ -1,8 +1,11 @@
-import { AttrKeyword, SectionType } from "../lexer/index.ts";
-import { AstNodeType, type AttributeDefinitionNode, type BodyContentNode, type BodyLineNode, type PanelAst, type SectionAst } from "../parser/index.ts";
-import type { BodyStatementNode, Diagnostic } from "../shared/index.ts";
-import type { ValidatedPanel } from "../validator/index.ts";
-import { ElementType, type ElementLayout, type PanelBodyLineLayout, type PanelLayout } from "./interface/index.ts";
+import { SectionType } from '../lexer/index.ts';
+import { AstNodeType } from '../parser/index.ts';
+import { InputElement } from './elements/input.element.ts';
+import { TextElement } from './elements/text.element.ts';
+import type { ElementLayout, PanelBodyLineLayout, PanelLayout } from './interface/index.ts';
+import type { AttributeDefinitionNode, BodyContentNode, BodyLineNode, SectionAst } from '../parser/index.ts';
+import type { Diagnostic } from '../shared/index.ts';
+import type { ValidatedPanel } from '../validator/index.ts';
 
 /**
  * @class PanelLayoutGenerator
@@ -34,8 +37,10 @@ export class PanelLayoutGenerator {
     }
 
     /**
-     * Generate the panel layout based on a previously created panel AST
-     * @returns PanelLayout representing each line of the panel in layout elements such as text, input, header
+     * Generate the panel layout based on the validated panel AST
+     *
+     * @return {*}  {PanelLayout} PanelLayout representing each line of the panel in layout elements such as text, input, header
+     * @memberof PanelLayoutGenerator
      */
     generate(): PanelLayout {
         if (this.body.statements.length > 0) {
@@ -58,8 +63,11 @@ export class PanelLayoutGenerator {
     }
 
     /**
-     * Process the current body line from the AST
-     * @param line {@link BodyLineNode} representing the current AST elements in the line
+     * Process the current body line from AST
+     *
+     * @private
+     * @param line {@link BodyLineNode} with the elements for current line from AST
+     * @memberof PanelLayoutGenerator
      */
     private processBodyLine(line: BodyLineNode) {
         let currentAttr: AttributeDefinitionNode = this.panel.body.attributes.get('+')!; // + attribute is a default attribute and should always exist
@@ -72,7 +80,10 @@ export class PanelLayoutGenerator {
             } else {
                 const value = this.formatElement(currentAttr, node);
                 if (value) {
-                    layoutLine.push(value);
+                    if (value.element) {
+                        layoutLine.push(value.element);
+                    }
+                    this.diagnostics.push(...value.diags);
                 }
             }
         }
@@ -86,12 +97,16 @@ export class PanelLayoutGenerator {
      * @param element {@link BodyContentNode} current element that will be processed
      * @returns ElementLayout or undefined if the current {@link BodyContentNode.type} is not supported
      */
-    private formatElement(attr: AttributeDefinitionNode, element: BodyContentNode): ElementLayout | undefined {
+    private formatElement(attr: AttributeDefinitionNode, element: BodyContentNode): {element: ElementLayout | undefined, diags: Diagnostic[]} | undefined {
         switch(element.type) {
             case AstNodeType.BodyText:
-                return this.formatText(element.value, attr);
+                const textElementInstance = new TextElement(attr, element);
+                const textElement = textElementInstance.create();
+                return { element: textElement, diags: textElementInstance.diagnostics }
             case AstNodeType.VariableReference: 
-                return this.formatInput(element.value, element.fieldLength, attr);
+                const inputElementInstance = new InputElement(attr, element);
+                const inputElement = inputElementInstance.create();
+                return { element: inputElement, diags: inputElementInstance.diagnostics }
             default:
                 this.diagnostics.push({
                     message: `Unsupported node type during layout generation: '${element.type}`,
@@ -101,146 +116,5 @@ export class PanelLayoutGenerator {
 
                 return undefined;
         }
-
-    }
-
-    /**
-     * Format current element as a `text` layout element
-     * @param text Value for the current element
-     * @param attr {@link AttributeDefinitionNode} which options will be used to determine how the element should be created
-     * @returns ElementLayout
-     * 
-     * @remark
-     * Consume is responsible to adhere to any additional options that are returned from this method.
-     * E.g if `caps: true`, the `value` should be converted to uppercase. This is not done automatically. 
-     */
-    private formatText(text: string, attr: AttributeDefinitionNode): ElementLayout {
-        const capsValue = this.getAttributeOptionValue(attr, AttrKeyword.CAPS, true);
-        const caps = capsValue === 'ON' || capsValue === 'IN' || capsValue === 'OUT';
-        
-        const intensValue = this.getAttributeOptionValue(attr, AttrKeyword.INTENS, true);
-        const intensify = intensValue === 'HIGH';
-        
-        return {
-            type: ElementType.TEXT,
-            value: text,
-            length: text.length,
-            caps: caps,
-            intensify: intensify,
-            color: this.generateColor(attr),
-            justify: this.generateJustify(attr)
-        }
-    }
-
-    /**
-     * Format current element as a `input` layout element
-     * @param id ID that should be used to identify the input element
-     * @param [fieldLength] Length of the field, defaults to 0
-     * @param attr {@link AttributeDefinitionNode} which options will be used to determine how the element should be created
-     * @returns ElementLayout
-     */
-    private formatInput(id: string, fieldLength: number = 0, attr: AttributeDefinitionNode): ElementLayout {
-        return {
-            type: ElementType.INPUT,
-            id: id,
-            length: fieldLength
-        }
-    }
-
-    /**
-     * Find an attribute option by keyword
-     * 
-     * @private
-     * @param attr Attribute definition to search
-     * @param keyword The keyword to find
-     * @return The attribute option or undefined
-     */
-    private findAttributeOption(attr: AttributeDefinitionNode, keyword: AttrKeyword) {
-        return attr.options.find(v => v.type === AstNodeType.AttributeOption && v.keyword === keyword);
-    }
-
-    /**
-     * Get the value of an attribute option, optionally converted to uppercase
-     * 
-     * @private
-     * @param attr Attribute definition to search
-     * @param keyword The keyword to find
-     * @param toUpper Whether to convert to uppercase
-     * @return The option value or undefined
-     */
-    private getAttributeOptionValue(attr: AttributeDefinitionNode, keyword: AttrKeyword, toUpper: boolean = false): string | undefined {
-        const option = this.findAttributeOption(attr, keyword);
-        if (!option?.value) return undefined;
-        return toUpper ? option.value.toUpperCase() : option.value;
-    }
-
-    /**
-     * Generate the text color that should be used for this element
-     * 
-     * If color is not set, takes TYPE and INTENS keywords into account or falls back to `white`
-     *
-     * @private
-     * @param {AttributeDefinitionNode} attr Attribute definition that is currently in effect
-     * @return {string} Color name
-     */
-    private generateColor(attr: AttributeDefinitionNode): string {
-        const colorValue = this.getAttributeOptionValue(attr, AttrKeyword.COLOR, false);
-        
-        if (colorValue) {
-            const normalized = colorValue.toLowerCase();
-            return normalized === 'turq' ? 'turquoise' : normalized;
-        }
-
-        // Color not found, use TYPE and INTENS for fallback
-        this.diagnostics.push({
-            message: `No color found for attribute '${attr.attributeChar}', using fallback`,
-            origin: 'LAYOUT',
-            severity: 'trace'
-        });
-
-        const typeValue = this.getAttributeOptionValue(attr, AttrKeyword.TYPE, true);
-        if (!typeValue) {
-            this.diagnostics.push({
-                message: `Unable to determine type for attribute '${attr.attributeChar}', using fallback color 'white'`,
-                origin: 'LAYOUT',
-                severity: 'trace'
-            });
-            return 'white';
-        }
-
-        const intensValue = this.getAttributeOptionValue(attr, AttrKeyword.INTENS, true);
-        const isHighIntensity = intensValue === 'HIGH';
-
-        const colorMap: Record<string, { high: string; normal: string }> = {
-            'TEXT': { high: 'white', normal: 'blue' },
-            'OUTPUT': { high: 'white', normal: 'blue' },
-            'INPUT': { high: 'red', normal: 'green' }
-        };
-
-        const colors = colorMap[typeValue];
-        return colors ? (isHighIntensity ? colors.high : colors.normal) : 'white';
-    }
-
-    /**
-     * Generate justification string
-     * 
-     * Converts ISPF JUST keyword values to CSS text-align values.
-     * Defaults to `none` (ISPF's ASIS equivalent)
-     *
-     * @private
-     * @param {AttributeDefinitionNode} attr Attribute definition
-     * @return {string} Justify value (left, right, or none)
-     */
-    private generateJustify(attr: AttributeDefinitionNode): string {
-        const justifyValue = this.getAttributeOptionValue(attr, AttrKeyword.JUST, true);
-        if (!justifyValue) return 'none';
-
-        const justifyMap: Record<string, string> = {
-            'LEFT': 'left',
-            'RIGHT': 'right',
-            'ASIS': 'none'
-        };
-
-        return justifyMap[justifyValue] ?? 'none';
     }
 }
