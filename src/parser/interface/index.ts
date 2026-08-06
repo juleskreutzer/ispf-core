@@ -1,3 +1,4 @@
+export * from './statements/index.ts';
 export * from './ast.interface.ts';
 export * from './attrAst.interface.ts';
 export * from './bodyAst.interface.ts';

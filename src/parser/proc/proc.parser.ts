@@ -1,6 +1,7 @@
 import { Parser } from '../parser.ts';
 import { TokenType } from '../../lexer/index.ts';
 import { AstNodeType } from '../enum/index.ts';
+import { VerStatementParser } from './statements/ver.statement.parser.ts';
 import type { Token } from '../../lexer/index.ts';
 import type { ProcExpressionNode } from '../interface/index.ts';
 import type { ProcStatement } from '../../shared/index.ts';
@@ -66,6 +67,12 @@ export class ProcParser extends Parser {
             const error = this.errorNode(`Expected PROC statement but found '${this.current.type}'`);
             this.recover({ consumeSynchronizationToken: true });
             return error;
+        }
+
+        // Handle specific command implementations
+        if (command.value && command.value.toUpperCase() === 'VER') {
+            // Handle VERify command with dedicated parser
+            return VerStatementParser.parse(this, command);
         }
 
         const args: ProcExpressionNode[] = [];
@@ -252,33 +259,5 @@ export class ProcParser extends Parser {
             default:
                 return 0;
         }
-    }
-
-    /**
-     * Checks whether the current token is a parenthesis with the supplied value.
-     *
-     * @param value The expected parenthesis character.
-     * @returns True when the current token is the requested parenthesis.
-     */
-    private checkParenthesis(value: string): boolean { 
-        return this.check(TokenType.Parenthesis) && this.current.value === value
-    }
-
-    /**
-     * Consumes a closing parenthesis when present.
-     *
-     * @returns The consumed token, or undefined.
-     */
-    private matchClosingParenthesis(): Token | undefined {
-        return this.checkParenthesis(')') ? this.advance() : undefined;
-    }
-
-    /**
-     * Consumes a comma token when present.
-     *
-     * @returns The consumed token, or undefined.
-     */
-    private matchComma(): Token | undefined {
-        return this.check(TokenType.Operator) && this.current.value === ',' ? this.advance() : undefined;
     }
 }

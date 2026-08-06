@@ -1,0 +1,1 @@
+export * from './ver.statement.interface.ts';

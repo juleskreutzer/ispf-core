@@ -39,21 +39,21 @@ export abstract class Parser {
     /**
      * Gets the current token from the stream without advancing.
      */
-    protected get current(): Token {
+    get current(): Token {
         return this.stream.peek();
     }
 
     /**
      * Gets the token immediately before the current cursor position.
      */
-    protected get previous(): Token | undefined {
+    get previous(): Token | undefined {
         return this.stream.previous();
     }
 
     /**
      * Checks whether the parser has reached the end of the token stream.
      */
-    protected isAtEnd(): boolean {
+    isAtEnd(): boolean {
         return this.stream.isAtEnd();
     }
 
@@ -63,7 +63,7 @@ export abstract class Parser {
      * @param offset The relative offset from the current cursor.
      * @returns The token at the requested position.
      */
-    protected peek(offset = 0): Token {
+    peek(offset = 0): Token {
         return this.stream.peek(offset);
     }
 
@@ -74,7 +74,7 @@ export abstract class Parser {
      * @param offset An optional lookahead offset.
      * @returns True when the token matches the requested type.
      */
-    protected check(type: TokenType, offset = 0): boolean {
+    check(type: TokenType, offset = 0): boolean {
         return this.stream.check(type, offset);
     }
 
@@ -84,7 +84,7 @@ export abstract class Parser {
      * @param types One or more token types that may be consumed.
      * @returns The consumed token, or undefined when no match is found.
      */
-    protected match(...types: TokenType[]): Token | undefined {
+    match(...types: TokenType[]): Token | undefined {
         return this.stream.match(...types);
     }
 
@@ -93,7 +93,7 @@ export abstract class Parser {
      *
      * @returns The token that was advanced past.
      */
-    protected advance(): Token {
+    advance(): Token {
         return this.stream.advance();
     }
 
@@ -104,7 +104,7 @@ export abstract class Parser {
      * @param message Optional custom diagnostic message used when consumption fails.
      * @returns The consumed token, or undefined when the token does not match.
      */
-    protected consume(type: TokenType, message?: string): Token | undefined {
+    consume(type: TokenType, message?: string): Token | undefined {
         const token = this.stream.consume(type);
 
         if (token) return token;
@@ -121,7 +121,7 @@ export abstract class Parser {
      * @param origin The origin of the diagnostic.
      * @returns The created diagnostic object.
      */
-    protected error(message: string, token: Token = this.current, severity: DiagnosticSeverity = 'error', origin: DiagnosticOrigin = 'PARSER'): Diagnostic {
+    error(message: string, token: Token = this.current, severity: DiagnosticSeverity = 'error', origin: DiagnosticOrigin = 'PARSER'): Diagnostic {
         const diagnostic = createParserDiagnostic(message, token, severity, origin);
         this.parserDiagnostics.push(diagnostic);
         return diagnostic;
@@ -134,7 +134,7 @@ export abstract class Parser {
      * @param token The token where the error was encountered.
      * @returns An AST error node.
      */
-    protected errorNode(message: string, token: Token = this.current): ErrorNode {
+    errorNode(message: string, token: Token = this.current): ErrorNode {
         this.error(message, token);
 
         return {
@@ -152,7 +152,7 @@ export abstract class Parser {
      * @param options Recovery options including synchronization tokens.
      * @returns The token at the recovery position.
      */
-    protected recover(options: ParserRecoveryOptions = {}): Token | undefined {
+    recover(options: ParserRecoveryOptions = {}): Token | undefined {
         const synchronizationTokens = options.synchronizationTokens ?? [TokenType.NewLine, TokenType.SectionStart, TokenType.EOF];
 
         while(!this.isAtEnd() && !synchronizationTokens.some((type) => this.check(type))) {
@@ -169,7 +169,7 @@ export abstract class Parser {
     /**
      * Skips trivia tokens such as newlines and comments.
      */
-    protected skipTrivia(): void {
+    skipTrivia(): void {
         while (this.match(TokenType.NewLine, TokenType.Comment)) {
             // Do nothing, continue untill a non-trivia token is found
         }
@@ -180,7 +180,7 @@ export abstract class Parser {
      *
      * @param diags The diagnostics to merge in.
      */
-    protected mergeDiagnostics(diags: Diagnostic[]): void {
+    mergeDiagnostics(diags: Diagnostic[]): void {
         this.parserDiagnostics.push(...diags);
     }
 
@@ -189,7 +189,7 @@ export abstract class Parser {
      *
      * @returns An error node when a lexer error token was consumed, otherwise undefined.
      */
-    protected parseLexerError(): ErrorNode | undefined {
+    parseLexerError(): ErrorNode | undefined {
         const token = this.match(TokenType.Error);
 
         if (!token) return undefined;
@@ -202,5 +202,33 @@ export abstract class Parser {
             value: token.value,
             location: token.location
         }
+    }
+
+    /**
+     * Checks whether the current token is a parenthesis with the supplied value.
+     *
+     * @param value The expected parenthesis character.
+     * @returns True when the current token is the requested parenthesis.
+     */
+    checkParenthesis(value: string): boolean { 
+        return this.check(TokenType.Parenthesis) && this.current.value === value
+    }
+
+    /**
+     * Consumes a closing parenthesis when present.
+     *
+     * @returns The consumed token, or undefined.
+     */
+    matchClosingParenthesis(): Token | undefined {
+        return this.checkParenthesis(')') ? this.advance() : undefined;
+    }
+
+    /**
+     * Consumes a comma token when present.
+     *
+     * @returns The consumed token, or undefined.
+     */
+    matchComma(): Token | undefined {
+        return this.check(TokenType.Operator) && this.current.value === ',' ? this.advance() : undefined;
     }
 }
