@@ -1,7 +1,9 @@
 import { AstNodeType } from '../../parser/index.ts';
 import { BaseValidator } from './base.validator.section.ts';
 import type { ProcValidatorResult } from '../../shared/index.ts';
-import type { ProcExpressionNode, ProcStatementNode, SectionAst, VariableReferenceNode } from '../../parser/index.ts';
+import type { ProcExpressionNode, ProcStatementNode, SectionAst, VariableReferenceNode, VerStatementNode } from '../../parser/index.ts';
+import { ProcKeyword } from '../../lexer/index.ts';
+import { VerStatementValidator } from './statements/ver.statement.validator.section.ts';
 
 /**
  * @class ProcSectionValidator
@@ -10,11 +12,15 @@ import type { ProcExpressionNode, ProcStatementNode, SectionAst, VariableReferen
  */
 export class ProcSectionValidator extends BaseValidator {
     private referencedVariables: Map<string, VariableReferenceNode>;
+    private checks: Map<string, VerStatementNode>;
+
     constructor(section: SectionAst) {
         super(section);
 
         // Used to keep track of variables that have been referenced in the PROC section
         this.referencedVariables = new Map<string, VariableReferenceNode>;
+        // Used to keep track of checks that need to be done when rendering panel
+        this.checks = new Map<string, VerStatementNode>;
     }
 
     /**
@@ -34,7 +40,7 @@ export class ProcSectionValidator extends BaseValidator {
             this.validateStatement(statement);
         }
 
-        return { diagnostics: this.diagnostics, referencedVariables: this.referencedVariables };
+        return { diagnostics: this.diagnostics, referencedVariables: this.referencedVariables, checks: this.checks };
     }
 
     /**
@@ -46,6 +52,13 @@ export class ProcSectionValidator extends BaseValidator {
         if (!statement.command) {
             this.createDiagnostic(`PROC statement is missing a command`, 'error', statement.location);
             return;
+        }
+
+        if (statement.command.type === AstNodeType.ProcKeyword && statement.command.keyword === ProcKeyword.VER) {
+            const result = new VerStatementValidator(statement as VerStatementNode).validate();
+            this.diagnostics.push(...result.diagnostics);
+            const newMap: Map<string, VerStatementNode> = new Map([...Array.from(this.checks.entries()), ...Array.from(result.checks.entries())]);
+            this.checks = newMap
         }
 
         this.walkExpressions(statement.argument);
@@ -75,7 +88,8 @@ export class ProcSectionValidator extends BaseValidator {
                 this.createDiagnostic(node.message, 'error', node.location);
                 return;
             case AstNodeType.VariableReference:
-                this.referencedVariables.set(node.value, node);
+                // Remove & in variable name
+                this.referencedVariables.set(node.value.replace('&', ''), node);
                 this.createDiagnostic(`PROC section is referencing variable '${node.value}'`, 'trace', node.location);
                 return;
             case AstNodeType.Identifier:

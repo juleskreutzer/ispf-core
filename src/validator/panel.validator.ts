@@ -3,7 +3,7 @@ import { createDefaultAttributes } from "../shared/index.ts";
 import { AttrSectionValidator } from './sections/attr.validator.section.ts';
 import { BodySectionValidator } from './sections/body.validator.section.ts';
 import { ProcSectionValidator } from './sections/proc.validator.section.ts';
-import type { AttributeDefinitionNode, PanelAst, VariableReferenceNode } from '../parser/index.ts';
+import type { AttributeDefinitionNode, PanelAst, VariableReferenceNode, VerStatementNode } from '../parser/index.ts';
 import type { Diagnostic, ParserResult } from '../shared/index.ts';
 import type { ValidatedPanel } from './interfaces/index.ts';
 
@@ -54,6 +54,7 @@ export class PanelValidator {
     public validate(): ValidatedPanel {
         let attributes: Map<string, AttributeDefinitionNode> = createDefaultAttributes();
         let variables: Map<string, VariableReferenceNode> = new Map();
+        let checks: Map<string, VerStatementNode> = new Map();
         let result;
 
         if (this.ast) {
@@ -71,6 +72,7 @@ export class PanelValidator {
                         result = new ProcSectionValidator(section).validate();
                         this.diagnostics.push(...result.diagnostics);
                         variables = result.referencedVariables;
+                        checks = result.checks;
                         break;
                     default:
                         this.diagnostics.push({
@@ -86,7 +88,8 @@ export class PanelValidator {
                 diagnostics: this.diagnostics,
                 body: {
                     attributes: attributes,
-                    variables: variables
+                    variables: variables,
+                    checks: checks
                 }
             }
         } else {

@@ -28,3 +28,43 @@ export function createDefaultAttribute(attributeChar: string, type: string, inte
         ]
     };
 }
+
+export function pictToRegex(pict: string): string {
+    if (!pict) return '^$';
+
+    let regex = '^' 
+    
+    for (const char of pict) {
+        switch (char.toUpperCase()) {
+            case 'C': 
+                // Any character
+                regex += '.'
+                break;
+            case 'A':
+                // Any alphabetic character
+                regex += '[A-Za-z#$@]';
+                break;
+            case 'N':
+            case '9':
+                // Numeric 
+                regex += '[0-9]'
+                break;
+            case 'X':
+                // hex character only
+                regex += '[0-9A-Fa-f]';
+                break;
+            default:
+                // Handle literal special 
+                const specialChars = '.^$+?{}()[]|\\';
+
+                if (specialChars.includes(char)) {
+                    regex += '\\' + char; // escape special characters
+                } else {
+                    regex += char;
+                }
+        }
+    }
+
+    regex += '$';
+    return regex;
+}
