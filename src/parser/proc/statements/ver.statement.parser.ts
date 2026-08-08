@@ -189,7 +189,7 @@ export class VerStatementParser {
         parser.matchComma();
         
         const pictToken = parser.current;
-        param.value = pictToken.value ?? '';
+        param.value = pictToken.value?.replaceAll("'", '') ?? '';
         parser.advance();
 
         return param;

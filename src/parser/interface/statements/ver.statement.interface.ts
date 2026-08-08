@@ -26,7 +26,7 @@ export type VerType =
     | 'ALPHAB'
     | 'BIT'
     | 'DBCS'
-    | 'DBNAME'
+    | 'DSNAME'
     | 'DSNAMEF'
     | 'DSNAMEFM'
     | 'DSNAMEPQ'

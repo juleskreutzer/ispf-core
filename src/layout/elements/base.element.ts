@@ -2,18 +2,21 @@ import { AstNodeType } from '../../parser/index.ts';
 import type { AttrKeyword, SourceLocation } from '../../lexer/index.ts';
 import type { Diagnostic, DiagnosticSeverity } from '../../shared/index.ts';
 import type { ElementLayout } from '../interface/index.ts';
-import type { AttributeDefinitionNode, AttributeOptionNode, BodyContentNode, ErrorNode } from '../../parser/index.ts';
+import type { AttributeDefinitionNode, AttributeOptionNode, BodyContentNode, ErrorNode, VerStatementNode } from '../../parser/index.ts';
 
 export abstract class BaseElement {
     private _attr: AttributeDefinitionNode;
     private _element: BodyContentNode;
     private _diagnostics: Diagnostic[];
+    private _checks: Map<string, VerStatementNode> | undefined;
 
-    constructor(attr: AttributeDefinitionNode, element: BodyContentNode) {
+    constructor(attr: AttributeDefinitionNode, element: BodyContentNode, checks?: Map<string, VerStatementNode>) {
         this._attr = attr;
         this._element = element;
 
         this._diagnostics = [];
+
+        if (checks) this._checks = checks;
     }
 
     get attr(): AttributeDefinitionNode {
@@ -50,5 +53,14 @@ export abstract class BaseElement {
 
         this._diagnostics.push(diag);
         return diag;
+    }
+
+    protected getCheck(): VerStatementNode | undefined {
+        if (!this._checks) return undefined;
+
+        const variable = this._element.value;
+
+        if (!variable) return undefined;
+        return this._checks.get(variable.toUpperCase());
     }
 }

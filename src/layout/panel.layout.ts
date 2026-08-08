@@ -6,6 +6,7 @@ import type { ElementLayout, PanelBodyLineLayout, PanelLayout } from './interfac
 import type { AttributeDefinitionNode, BodyContentNode, BodyLineNode, SectionAst } from '../parser/index.ts';
 import type { Diagnostic } from '../shared/index.ts';
 import type { ValidatedPanel } from '../validator/index.ts';
+import { SelectionElement } from './elements/selection.element.ts';
 
 /**
  * @class PanelLayoutGenerator
@@ -104,9 +105,7 @@ export class PanelLayoutGenerator {
                 const textElement = textElementInstance.create();
                 return { element: textElement, diags: textElementInstance.diagnostics }
             case AstNodeType.VariableReference: 
-                const inputElementInstance = new InputElement(attr, element);
-                const inputElement = inputElementInstance.create();
-                return { element: inputElement, diags: inputElementInstance.diagnostics }
+                return this.formatVariableReference(attr, element);
             default:
                 this.diagnostics.push({
                     message: `Unsupported node type during layout generation: '${element.type}`,
@@ -115,6 +114,40 @@ export class PanelLayoutGenerator {
                 });
 
                 return undefined;
+        }
+    }
+
+    private formatVariableReference(attr: AttributeDefinitionNode, element: BodyContentNode): { element: ElementLayout | undefined, diags: Diagnostic[]} | undefined {
+        const variable = element.value;
+
+        if (!variable) return { element: undefined, diags: [{message: `Unable to format variable ${element.type} due to missing value`, origin: 'VALIDATOR', severity: 'error'}]};
+
+        const match = this.panel.body.checks.get(variable.toUpperCase());
+
+        if (!match) {
+            // Unknown which variable reference, no additional validation via PROC section, so fall back to regular input field
+            const inputElementInstance = new InputElement(attr, element, this.panel.body.checks);
+            const inputElement = inputElementInstance.create();
+            return { element: inputElement, diags: inputElementInstance.diagnostics };
+        } else if (match.command.type === AstNodeType.ProcKeyword && match.command.keyword === 'VER') {
+            const param = match.parameters[0];
+
+            if (!param) return { element: undefined, diags: [{message: `Unexpected error when generating layout element for '${element.value ?? ''}' (no parameters)`, origin: 'LAYOUT', severity: 'error'}]};
+
+            let instance;
+            switch(param.type) {
+                case 'LIST':
+                    instance = new SelectionElement(attr, element, this.panel.body.checks);
+                    const selectionElement = instance.create();
+                    return { element: selectionElement, diags: instance.diagnostics };
+                case 'PICT':
+                default:
+                    instance = new InputElement(attr, element, this.panel.body.checks);
+                    const inputElement = instance.create();
+                    return { element: inputElement, diags: instance.diagnostics };
+            }
+        } else {
+            return { element: undefined, diags: [{message: `Unexpected error when generating layout element for '${element.value ?? ''}`, origin: 'LAYOUT', severity: 'error'}]};
         }
     }
 }
